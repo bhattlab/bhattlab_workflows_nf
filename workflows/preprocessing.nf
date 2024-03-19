@@ -2,22 +2,22 @@
 
 nextflow.enable.dsl=2
 
-include { input_raw } 							from 	'../modules/input/input_raw'
-include { combine_fastqs } 					from 	'../modules/input/combine_fastqs'
+include { input_raw } from '../modules/input/input_raw'
+include { combine_fastqs } from '../modules/input/combine_fastqs'
 
 /* PREPROCESSING
  * Processes for fastqc, multiqc, and read processing, including
  * deduplication, trimming, human read removal
 */
 
-include { fastqc as fastqc_pre } 		from  '../modules/preprocessing/fastqc'
-include { fastqc as fastqc_post } 	from 	'../modules/preprocessing/fastqc'
-include { multiqc as multiqc_pre } 	from 	'../modules/preprocessing/multiqc'
-include { multiqc as multiqc_post }	from 	'../modules/preprocessing/multiqc'
-include { deduplicate } 						from 	'../modules/preprocessing/deduplicate'
-include { trimgalore } 							from 	'../modules/preprocessing/trimgalore'
-include { hostremoval } 						from 	'../modules/preprocessing/hostremoval'
-include { aggregatereports } 				from 	'../modules/preprocessing/aggregate'
+include { fastqc as fastqc_pre } from '../modules/preprocessing/fastqc'
+include { fastqc as fastqc_post } from '../modules/preprocessing/fastqc'
+include { multiqc as multiqc_pre } from '../modules/preprocessing/multiqc'
+include { multiqc as multiqc_post } from '../modules/preprocessing/multiqc'
+include { deduplicate } from '../modules/preprocessing/deduplicate'
+include { trimgalore } from '../modules/preprocessing/trimgalore'
+include { hostremoval } from '../modules/preprocessing/hostremoval'
+include { aggregatereports } from '../modules/preprocessing/aggregate'
 
 workflow {
 	ch_read_pairs = input_raw()
