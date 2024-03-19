@@ -1,0 +1,57 @@
+
+# How are the final results published?
+# By default, files are copied from the work-dir.
+# Valid settings: "copy", "move", "link", "symlink"
+## Attention: "link" does not work on all filesystems, such as some /scratch volumes
+publish_mode: "link"
+
+# Where are the input files?
+# The input file should be a comma-separated file with one line per sample, 
+# formatted in the following way:
+# sampleID,reverse,forward
+# Sample1,</path/to/raw/reads>/forward_reads.fastq.gz,</path/to/raw/reads>/reverse_reads.fastq.gz
+samples: "/labs/asbhatt/data/bhatt_lab_sequencing/23-03-08_awigen2/all_samples.csv"
+
+# Where should the results end up?
+#### Attention: This should NOT be a relative path
+#### Make it an absolute path so that you can use the different workflows
+#### together.
+outdir: "/labs/asbhatt/data/bhatt_lab_sequencing/23-03-08_awigen2/"
+
+
+#########################################################################
+# Preprocessing parameters
+
+# location of the host genome
+# Important! It needs to be indexed already
+host_genome_location: "/labs/asbhatt/data/databases/host_genome/hg38/"
+bwa_index_base: "hg38.fa"
+
+# trim galore
+trimgalore_quality:  30
+trimgalore_min_read_length: 60
+trimgalore_start_trim: 0
+trimgalore_end_trim: 0
+
+#########################################################################
+# Classification parameters
+
+run_motus: true
+run_metaphlan: true
+
+# parameters for mOTUs2
+motus_map_mgs_cutoff: 2
+motus_min_len_align_length: 75
+motus_db_path: "/labs/asbhatt/data/databases/motus_db/3.0.3/db_mOTU/"
+motus_gtdb_path: "/labs/asbhatt/data/databases/motus_db/3.0.3/mOTUs_3.0.0_GTDB_tax.tsv"
+
+# parameters for metaphlan
+metaphlan_db_path: "/labs/asbhatt/data/databases/metaphlan_db/vJan21/"
+
+#########################################################################
+# Binning parameters
+
+checkm_db_path: "/labs/asbhatt/data/databases/checkm_db/2015_01_16/"
+
+#########################################################################
+# Viral classification databases
