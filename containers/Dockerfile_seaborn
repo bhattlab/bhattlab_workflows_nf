@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1
+FROM mambaorg/micromamba:focal
+
+USER root
+RUN apt-get update && \
+  apt-get install -yq tzdata && \
+  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  dpkg-reconfigure -f noninteractive tzdata
+USER $MAMBA_USER
+
+RUN <<EOF cat > seaborn.yml
+name: seaborn
+channels:
+  - conda-forge
+dependencies:
+  - pandas=1.5.3
+  - seaborn=0.12.2
+EOF
+
+RUN micromamba install -y -n base -f seaborn.yml && \
+  micromamba clean --all --yes
+
+ENV PATH "/opt/conda/bin:$PATH"

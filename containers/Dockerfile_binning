@@ -1,0 +1,29 @@
+# syntax=docker/dockerfile:1
+FROM mambaorg/micromamba:focal
+
+USER root
+RUN apt-get update && \
+  apt-get install -yq tzdata && \
+  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  dpkg-reconfigure -f noninteractive tzdata
+USER $MAMBA_USER
+
+RUN <<EOF cat > binning.yml
+name: binning
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - metabat2=2.15
+  - bwa=0.7.17
+  - samtools=1.16.1
+  - maxbin2=2.2.7
+  - das_tool=1.1.6
+  - scikit-learn=1.1.0
+  - concoct=1.1.0
+EOF
+
+RUN micromamba install -y -n base -f binning.yml && \
+  micromamba clean --all --yes
+
+ENV PATH "/opt/conda/bin:$PATH"

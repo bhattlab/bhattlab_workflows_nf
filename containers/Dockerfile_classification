@@ -1,0 +1,28 @@
+# syntax=docker/dockerfile:1
+FROM mambaorg/micromamba:focal
+
+USER root
+RUN apt-get update && \
+  apt-get install -yq tzdata && \
+  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  dpkg-reconfigure -f noninteractive tzdata
+USER $MAMBA_USER
+
+RUN <<EOF cat > classification.yml
+name: classification
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - python=3.8.1
+  - motus=3.0.3
+  - metaphlan=4.0.4
+  - kraken2=2.1.2
+  - bracken=2.8
+EOF
+
+RUN micromamba install -y -n base -f classification.yml && \
+  micromamba clean --all --yes
+
+ENV PATH "/opt/conda/bin:$PATH"
+
