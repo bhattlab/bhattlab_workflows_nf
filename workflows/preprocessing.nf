@@ -22,10 +22,12 @@ include { aggregatereports } from '../modules/preprocessing/aggregate'
 workflow {
 	ch_read_pairs = input_raw()
 	ch_versions = Channel.empty()
-	
-	// Combine fastqs that were sequenced across multiple lanes
-	ch_reads_combined = combine_fastqs( ch_read_pairs.groupTuple() )
 
+	// Combine fastqs that were sequenced across multiple lanes
+	ch_reads_combined = combine_fastqs( ch_read_pairs
+		.groupTuple()
+		.map{ sample, reads -> [sample, reads.flatten()] } )
+	
 	// PREPROCESSING
 	// FASTQC
 	ch_fastqc = fastqc_pre(ch_reads_combined, "pre")
@@ -36,7 +38,7 @@ workflow {
 	ch_versions = ch_versions.mix(ch_multiqc_pre.versions.first())
 
 	// DEDUPLICATION
-	ch_deduplicated = deduplicate(ch_read_pairs)
+	ch_deduplicated = deduplicate(ch_reads_combined)
 	ch_versions = ch_versions.mix(ch_deduplicated.versions.first())
 
 	// TRIMMING
