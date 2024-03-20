@@ -11,8 +11,8 @@ process combine_fastqs {
 	echo !{sample_id}
 	mkdir read_dir
 	mv !{reads} ./read_dir
-	forward_files="\$(find ./read_dir/ | grep -E "!{sample_id}_.*(_1)(\\.fastq\\.gz|\\.fq\\.gz)" | sort)"
-	reverse_files="\$(find ./read_dir/ | grep -E "!{sample_id}_.*(_2)(\\.fastq\\.gz|\\.fq\\.gz)" | sort)"
+	forward_files="\$(find ./read_dir/ | grep -E ".*(_1)(\\.fastq\\.gz|\\.fq\\.gz)" | sort)"
+	reverse_files="\$(find ./read_dir/ | grep -E ".*(_2)(\\.fastq\\.gz|\\.fq\\.gz)" | sort)"
 	if [[ "\$(printf '%s\\n' "${forward_files[@]}" | wc -l)" -gt 1 ]]
 	then
 		unpigz -p 2 -c \${forward_files[@]} > "!{sample_id}_1.fastq"
