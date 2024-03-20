@@ -5,6 +5,7 @@ process multiqc {
     input:
     path '*'
     val(type)
+    path(old_results)
 
     output:
     path 'multiqc_*', emit: multiqc
@@ -12,7 +13,14 @@ process multiqc {
 
     script:
     """
-    multiqc --filename multiqc_${type}_report.html .
+
+    mkdir all_new_fastq
+    mv *.zip ./all_new_fastq
+    mv *.html ./all_new_fastq
+
+    cp -n ${old_results}/${type}*/* ./all_new_fastq
+    
+    multiqc --filename multiqc_${type}_report.html ./all_new_fastq
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
