@@ -49,8 +49,15 @@ motus_gtdb_path: "/labs/asbhatt/data/databases/motus_db/3.0.3/mOTUs_3.0.0_GTDB_t
 metaphlan_db_path: "/labs/asbhatt/data/databases/metaphlan_db/vJan21/"
 
 #########################################################################
+# Assembly parameters
+
+# bakta database
+bakta_db_path: "/labs/asbhatt/data/databases/bakta_db/v_5.0/db/"
+
+#########################################################################
 # Binning parameters
 
+# checkM database
 checkm_db_path: "/labs/asbhatt/data/databases/checkm_db/2015_01_16/"
 
 #########################################################################

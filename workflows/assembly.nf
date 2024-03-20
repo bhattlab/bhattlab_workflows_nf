@@ -3,16 +3,16 @@
 nextflow.enable.dsl=2
 
 
-include { input_check } from './modules/input/input_check'
+include { input_check } from '../modules/input/input_check'
 
 /* ASSEMBLY
- run megahit, prodigal, and quast
+ run megahit, bakta, and quast
 */
 
-include { megahit } from './modules/assembly/megahit'
-include { quast } from './modules/assembly/quast'
-include { combine_quast } from './modules/assembly/quast'
-include { prodigal } from './modules/assembly/prodigal'
+include { megahit } from '../modules/assembly/megahit'
+include { quast } from '../modules/assembly/quast'
+include { combine_quast } from '../modules/assembly/quast'
+include { bakta } from '../modules/assembly/bakta'
 
 
 workflow {
@@ -30,9 +30,9 @@ workflow {
 	ch_quast_all = combine_quast(ch_quast.quast_res.collect())
 	ch_versions = ch_versions.mix(ch_quast.versions.first())
 	
-	// PRODIGAL
-	ch_prodigal = prodigal(ch_megahit.contigs)
-	ch_versions = ch_versions.mix(ch_prodigal.versions.first())
+	// BAKTA (internally runs prodigal)
+	ch_bakta = bakta(ch_megahit.contigs, params.bakta_db_path)
+	ch_versions = ch_versions.mix(ch_bakta.versions.first())
 
 	// VERSION output
 	ch_versions
