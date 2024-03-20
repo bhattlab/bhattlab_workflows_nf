@@ -34,7 +34,7 @@ workflow {
 	ch_versions = ch_versions.mix(ch_fastqc.versions.first())
 
 	// MULTIQC
-	ch_multiqc_pre = multiqc_pre(ch_fastqc.fastqc.collect(), "pre")
+	ch_multiqc_pre = multiqc_pre(ch_fastqc.fastqc.collect(), "pre", params.outdir + "/stats/fastqc")
 	ch_versions = ch_versions.mix(ch_multiqc_pre.versions.first())
 
 	// DEDUPLICATION
@@ -56,7 +56,7 @@ workflow {
 	ch_postfastqc = fastqc_post(ch_host_remove.reads, "post")
 
 	// MULTIQC again
-	multiqc_post(ch_postfastqc.fastqc.collect(), "post")
+	multiqc_post(ch_postfastqc.fastqc.collect(), "post", params.outdir + "/stats/fastqc")
 
 	// AGGREGATE REPORTS
 	aggregatereports(ch_host_remove.stats.collect(), 
