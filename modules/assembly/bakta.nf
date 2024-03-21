@@ -18,7 +18,7 @@ process bakta {
     --skip-tmrna --skip-ncrna --skip-ncrna-region --skip-crispr \
     --skip-sorf --skip-gap \
     --keep-contig-headers --meta ${assembly}
-   rm bakta_${sample_id}/assembly.fna
+   rm bakta_${sample_id}/${assembly}
 
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
