@@ -12,8 +12,8 @@ include { checkv as checkv_gn } from '../modules/viral_annotation/checkv'
 
 workflow {
   ch_input = input_check_assembly()
-  ch_input.view()
   ch_versions = Channel.empty()
+  
   // VIBRANT
   ch_vibrant = vibrant(ch_input, params.vibrant_db_path)
   ch_versions = ch_versions.mix(ch_vibrant.versions.first())
