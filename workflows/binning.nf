@@ -3,20 +3,21 @@
 nextflow.enable.dsl=2
 
 
-include { input_check } from './modules/input/input_check'
-include { input_check_assembly } from './modules/input/input_assembly'
+include { input_check } from '../modules/input/input_check'
+include { input_check_assembly } from '../modules/input/input_assembly'
 
 /* BINNING
  * Runs metabat2, maxbin, and Concoct on the contigs, then DAS tool
  * Check quality by CheckM or sth (maybe others)?
 */
 
-include { binning_prep } from './modules/binning/binning_prep'
-include { metabat } from './modules/binning/metabat'
-include { maxbin } from './modules/binning/maxbin'
-include { concoct } from './modules/binning/concoct'
-include { dastool } from './modules/binning/dastool'
-include { checkm } from './modules/binning/checkm'
+include { binning_prep } from '../modules/binning/binning_prep'
+include { metabat } from '../modules/binning/metabat'
+include { maxbin } from '../modules/binning/maxbin'
+include { concoct } from '../modules/binning/concoct'
+include { dastool } from '../modules/binning/dastool'
+include { checkm } from '../modules/binning/checkm'
+include { gtdbtk } from '../modules/binning/gtdbtk'
 
 workflow {
 
@@ -58,6 +59,10 @@ workflow {
     // run checkM on DAStool bins
     ch_checkm = checkm(ch_dastool.bins, params.checkm_db_path)
     ch_versions = ch_versions.mix(ch_checkm.versions.first())
+
+    // GTDB-tk
+    ch_gtdb = gtdbtk(ch_dastool.bins, params.gtdb_db_path)
+    ch_versions = ch_versions.mix(ch_gtdb.versions.first())
 
     // VERSION output
     ch_versions
