@@ -60,6 +60,9 @@ bakta_db_path: "/labs/asbhatt/data/databases/bakta_db/v_5.0/db/"
 # checkM database
 checkm_db_path: "/labs/asbhatt/data/databases/checkm_db/2015_01_16/"
 
+# path to the GTDB database
+gtdb_db_path: "/labs/asbhatt/data/databases/GTDBTK/release214/"
+
 #########################################################################
 # Viral classification databases
 
