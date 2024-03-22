@@ -1,23 +1,26 @@
 process vibrant {
-  publishDir params.outdir + "/phageannotation/vibrant/", mode: params.publish_mode
-  tag "VIBRANT for $sample_id"
+  tag "Vibrant on $sample_id"
+  publishDir params.outdir + "/viruses/vibrant/", mode: params.publish_mode, pattern: "vibrant_*"
 
   input:
   tuple val(sample_id), path(assembly)
+  path(vibrant_db)
 
   output:
-  path "${sample_id}/VIBRANT_${sample_id}.contigs/VIBRANT_phages_${sample_id}.contigs/${sample_id}.contigs.phages_combined.fna", emit: vibrant_all
-  path "${sample_id}/VIBRANT_${sample_id}.contigs/VIBRANT_phages_${sample_id}.contigs/${sample_id}.contigs.phages_lysogenic.fna", emit: vibrant_lysogenic
-  path "${sample_id}/VIBRANT_${sample_id}.contigs/VIBRANT_phages_${sample_id}.contigs/${sample_id}.contigs.phages_lytic.fna", emit: vibrant_lytic
-  path "${sample_id}/VIBRANT_${sample_id}.contigs/VIBRANT_phages_${sample_id}.contigs/${sample_id}.contigs.phages_circular.fna", emit: vibrant_circular
-  path "${sample_id}/VIBRANT_${sample_id}.contigs/VIBRANT_results_${sample_id}.contigs/VIBRANT_genome_quality_${sample_id}.contigs.tsv", emit: vibrant_quality
-  path "${sample_id}/VIBRANT_${sample_id}.contigs/VIBRANT_results_${sample_id}.contigs/VIBRANT_integrated_prophage_coordinates_${sample_id}.contigs.tsv", emit: vibrant_coordinates
+  tuple val(sample_id), path("vibrant_${sample_id}"), emit: vibrant_res
+  tuple val(sample_id), path("all_phages_combined.fna"), emit: vibrant_phages
+  path "versions.yml", emit: versions
 
-
-
-  script:
+  shell:
   """
-  VIBRANT_run.py -i ${assembly} -t $task.cpus -f nucl -folder ${sample_id} -no_plot
-  """
+  VIBRANT_run.py -i ${assembly} -t ${task.cpus} -f nucl \
+    -folder ./vibrant_${sample_id} -no_plot -d ${vibrant_db}/databases \
+    -m ${vibrant_db}/files
+  cp ./vibrant_${sample_id}/VIBRANT*/VIBRANT_phages*/*phages_combined.fna ./all_phages_combined.fna
 
+  cat <<-END_VERSIONS > versions.yml
+  "${task.process}":
+      VIBRANT: \$( VIBRANT_run.py --version | sed -e "s/VIBRANT v//g" )
+  END_VERSIONS
+  """
 }

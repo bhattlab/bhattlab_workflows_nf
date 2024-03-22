@@ -62,3 +62,12 @@ checkm_db_path: "/labs/asbhatt/data/databases/checkm_db/2015_01_16/"
 
 #########################################################################
 # Viral classification databases
+
+# geNomad database
+genomad_db_path: "/labs/asbhatt/data/databases/genomad/v1.6/genomad_db/"
+
+# VIBRANT database
+vibrant_db_path: "/labs/asbhatt/data/databases/vibrant_db/v1.2.1"
+
+# CheckV database
+checkv_db_path: "/labs/asbhatt/data/databases/checkv_db/checkv-db-v1.5"
