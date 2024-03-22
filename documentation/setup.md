@@ -13,7 +13,7 @@ can re-use it for all of the workflows.
 The workflows here have been run on a high-performance computing cluster 
 using the [Slurm](https://slurm.schedmd.com/overview.html) scheduler. If you 
 are running these workflows on a different system, you might have to adjust 
-the [`run.config`](config/run.config) file as well.
+the [`run.config`](../config/run.config) file as well.
 
 ### Table of contents
 
