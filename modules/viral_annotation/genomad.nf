@@ -13,8 +13,8 @@ process genomad {
 
   shell:
   """
-  /opt/conda/bin/genomad  end-to-end --disable-nn-classification \
-    --threads ${task.cpus} ${assembly} ./genomad_${sample} ${genomad_db}
+  genomad  end-to-end --disable-nn-classification \
+    --threads ${task.cpus} ${assembly} ./genomad_${sample_id} ${genomad_db}
   cp ./genomad_${sample_id}/*summary/*_virus.fna ./all_phages.fna
 
   cat <<-END_VERSIONS > versions.yml
