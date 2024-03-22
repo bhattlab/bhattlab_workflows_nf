@@ -3,8 +3,11 @@
  * and then dereplicates the viral set across samples.
 */
 
-include { vibrant } from './modules/viral_annotation/vibrant'
 include { input_assembly } from './modules/input/input_assembly'
+
+include { vibrant } from '../modules/viral_annotation/vibrant'
+include { genomad } from '../modules/viral_annotation/genomad'
+
 
 workflow {
   ch_contigs = input_assembly()
