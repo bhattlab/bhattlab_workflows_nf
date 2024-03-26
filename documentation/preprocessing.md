@@ -17,8 +17,11 @@ length limit
 As for every of these workflows, you will have to edit the `params.yml` file
 to specify the output location, database locations, and parameters (see the
 [General setup](./setup.md) page). Of importance for the 
-preprocessing workflow is mostly the host genome and the parameters for `trim 
-galore`.  
+preprocessing workflow is: 
+- the host genome location
+- the parameters for `trim galore`.  
+
+
 Additionally, you will have to prepare the sample sheet (see below).
 
 Then, you can run the workflow like this:

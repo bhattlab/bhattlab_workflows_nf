@@ -14,8 +14,9 @@ Our pipeline does the following tasks:
 As for every of these workflows, you will have to edit the `params.yml` file
 to specify the output location, database locations, and parameters (see the
 [General setup](./setup.md) page). Of importance for the 
-preprocessing workflow is basically only the bakta database location.
-Additionally, you will have to prepare the sample sheet (see below).
+assembly workflow is:
+- bakta database location.
+
 
 Then, you can run the workflow like this:
 ```bash
