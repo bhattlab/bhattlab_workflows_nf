@@ -26,7 +26,7 @@ long_reads: false
 
 # location of the host genome
 # Important! It needs to be indexed already
-host_genome_location: "/labs/asbhatt/data/databases/host_genome/hg38/"
+host_genome_location: "/labs/asbhatt/data/databases/host_genomes/hg38/"
 bwa_index_base: "hg38.fa"
 
 # trim galore
