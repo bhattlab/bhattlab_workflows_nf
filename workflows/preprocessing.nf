@@ -23,8 +23,8 @@ include { aggregatereports } from '../modules/preprocessing/aggregate'
 */
 
 include { input_raw_lr } from '../modules/input/input_raw'
-include { nanoplot as nanoplot_pre } from './modules/preprocessing/nanoplot'
-include { nanoplot as nanoplot_post } from './modules/preprocessing/nanoplot'
+include { nanoplot as nanoplot_pre } from '../modules/preprocessing/nanoplot'
+include { nanoplot as nanoplot_post } from '../modules/preprocessing/nanoplot'
 include { hostremoval_lr } from '../modules/preprocessing/hostremoval'
 include { aggregatereports_lr } from '../modules/preprocessing/aggregate'
 
