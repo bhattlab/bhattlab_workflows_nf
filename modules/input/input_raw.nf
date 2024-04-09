@@ -36,3 +36,29 @@ workflow input_raw {
     emit:
     reads = ch_reads
 }
+
+workflow input_raw_lr {
+    main:
+    if(hasExtension(params.samples, "csv")){
+        // extracts read files from samplesheet CSV and distribute into channels
+        ch_input = Channel
+            .from(file(params.samples))
+            .splitCsv(header: true)
+            .map { row ->
+                    if (row.size() == 2) {
+                        def sampleid = row.sampleID
+                        def reads = row.reads ? file(row.reads, checkIfExists: true) : false
+                        // Check if given combination is valid
+                        if (!reads) exit 1, "Invalid input samplesheet: Reads can not be empty."
+                        return [ sampleid, reads]
+                    } else {
+                        exit 1, "Input samplesheet contains row with ${row.size()} column(s). Expects 2."
+                    }
+             }  
+    } else {
+        exit 1, "Input samplesheet should be a csv file organised like this:\n\nsampleID,reads"
+    }
+   
+    emit:
+    reads = ch_input
+}

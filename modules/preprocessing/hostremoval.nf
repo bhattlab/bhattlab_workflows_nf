@@ -40,3 +40,31 @@ process hostremoval {
 
 }
 
+process hostremoval{
+    publishDir params.outdir + "/cleaned_reads/", mode: params.publish_mode, pattern: "reads_*"
+    tag "Host removal for $sample_id"
+
+    input:
+    tuple val(sample_id), path(reads)
+    path host_genome_location
+    val bwa_index_base
+
+    output:
+    tuple val(sample_id), path("reads_${sample_id}.fastq.gz"), emit: reads
+    path("${sample_id}.location"), emit: read_loc
+    path "versions.yml", emit: versions
+
+    shell:
+    """
+    minimap2 -x map-ont -t ${task.cpus} -a ${host_genome_location}/${bwa_index_base} ${reads} > out.sam
+    samtools fastq --threads ${task.cpus} -n -f4 out.sam > reads_${sample_id}.fastq
+    pigz reads_${sample_id}.fastq  
+    echo "${sample_id},${params.outdir}/cleaned_reads/reads_${sample_id}.fastq.gz" > ${sample_id}.location
+  
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        minimap2: \$( minimap2 --version )
+        samtools: \$( samtools --version | head -n 1 | sed -e "s/samtools //g" )
+    END_VERSIONS
+    """
+}
