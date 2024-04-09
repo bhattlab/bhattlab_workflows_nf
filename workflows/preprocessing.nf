@@ -28,9 +28,6 @@ include { nanoplot as nanoplot_post } from '../modules/preprocessing/nanoplot'
 include { hostremoval_lr } from '../modules/preprocessing/hostremoval'
 include { aggregatereports_lr } from '../modules/preprocessing/aggregate'
 
-ch_nanoplot = nanoplot_pre(ch_reads, 'pre')
-ch_versions = ch_versions.mix(ch_nanoplot.versions.first())
-
 workflow {
 
 	ch_versions = Channel.empty()
