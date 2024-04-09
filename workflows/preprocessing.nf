@@ -40,7 +40,7 @@ workflow {
 		ch_versions = ch_versions.mix(ch_nanoplot.versions.first())
 
 		// host removal
-		ch_host_removed = hostremoval_lr(ch_raw_eads, 
+		ch_host_removed = hostremoval_lr(ch_raw_reads, 
 				params.host_genome_location, 
 				params.bwa_index_base)
   	ch_versions = ch_versions.mix(ch_host_removed.versions.first())
