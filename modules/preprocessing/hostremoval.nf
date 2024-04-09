@@ -40,7 +40,7 @@ process hostremoval {
 
 }
 
-process hostremoval{
+process hostremoval_lr {
     publishDir params.outdir + "/cleaned_reads/", mode: params.publish_mode, pattern: "reads_*"
     tag "Host removal for $sample_id"
 
