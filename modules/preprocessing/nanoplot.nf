@@ -1,5 +1,5 @@
 process nanoplot {
-	publishDir params.outdir + "/nanoplot/", mode: params.publish_mode, pattern: "nanoplot_*"
+	publishDir params.outdir + "/stats/nanoplot/", mode: params.publish_mode, pattern: "nanoplot_*"
 	tag "Nanoplot on $sample_id"
 
 	input:
