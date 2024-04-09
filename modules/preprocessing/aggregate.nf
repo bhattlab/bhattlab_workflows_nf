@@ -49,6 +49,7 @@ process aggregatereports_lr {
   input:
   path(results)
   path(read_location)
+  path(read_summary)
   path(full_report)
 
   output:
