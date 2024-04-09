@@ -98,7 +98,7 @@ workflow {
 		aggregatereports(ch_host_remove.stats.collect(), 
 						ch_host_remove.read_loc.collect(),
 						params.outdir + "/stats/preprocessed_reads.csv",
-						params.outdir + "/stats/read_counts.tsv")
+						params.outdir + "/stats/read_counts.csv")
 	}
 
 	// VERSION output
