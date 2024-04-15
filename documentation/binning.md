@@ -83,3 +83,27 @@ This script will create the following outputs:
 	- `gtdb`: Folder containing the GTDB-tk output files
 - `versions_binning.yml`: The versions for each of the tools using in the
 binning pipeline
+
+## Long reads
+
+As for all the long read workflows, you will have to set the `long_reads` parameter
+in the `params.yml` to `true`.
+
+Additionally, the input file with the cleaned reads should only have two columns:
+
+```
+sampleID,reads
+Sample_1,</path/to/reads/>cleaned_reads_1.fq.gz
+Sample_2,</path/to/reads/>cleaned_reads_2.fq.gz
+```
+
+Lastly, you will have to supply the `samples` parameter when calling 
+nextflow like this:
+
+```bash
+nextflow run </path/to/this/repo>/workflows/binning.nf \
+	-c </path/to/this/repo>/config/run.config \
+	-params-file params.yml \
+	-with-trace -with-report \
+	--samples ./cleaned_reads.csv --input_assembly ./assemblies.csv
+```

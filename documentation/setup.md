@@ -33,7 +33,7 @@ On SCG, nextflow is already installed and can be loaded via `module load`.
 Please note that you need the right version of java as well for it to work. 
 Therefore, add the following lines to your script:
 
-```
+```bash
 module load java/18.0.2.1
 module load nextflow/22.10.5
 ```
@@ -139,12 +139,12 @@ specific workflow. For every project, it is good to have a different
 `params.yml` file, but you can use it for multiple workflows.
 
 Make a copy of the `config/params.yml` file in this repository and edit it,
-for example using `vim`.
+for example using `nano`.
 
 ```bash
 cd <your-project-location>
 cp <bhattlab_workflows_nf-location>/config/params.yml ./params_projectx.yml
-vim ./params_projectx.yml
+nano ./params_projectx.yml
 ```
 
 Adjust the parameters in the file to those fitting your system/project. 

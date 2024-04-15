@@ -19,14 +19,15 @@ find more workflows.
     - [**Viral** contig prediction](manual/viral.md) 
 
 ### Quickstart
-If you're in the Bhatt lab and working on SCG, this command is an example of 
-how to run the workflows. Note that you might have to modify the `params.yml` 
-file according to your project. There is a template in the [config 
-folder](config/params.yml), as a start.  
-Other users will need to change these options (see [Running a 
-workflow](documentation/running.md))
 
+If you're in the Bhatt lab and working on SCG, you should clone this 
+repository to your folder:
+```bash
+git clone git@github.com:jakob-wirbel/bhattlab_workflows_nf.git
 ```
+You can then run a workflow like this:
+
+```bash
 module load java/18.0.2.1
 module load nextflow/22.10.5
 
@@ -35,6 +36,13 @@ nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 	-params-file params.yml \
 	-with-trace -with-report -resume
 ```
+
+Note that you might have to modify the `params.yml` 
+file according to your project. There is a template in the [config 
+folder](config/params.yml), as a start.  
+Other users will need to change these options (see [Running a 
+workflow](documentation/running.md))
+
 
 **Important**  
 Once everything is done and ran correctly, you should delete all the 
@@ -48,3 +56,13 @@ from the run.
 ```
 rm -rf .nextflow 
 ```
+
+
+## Question?
+
+Please feel free to check out the documentation folder. Maybe your question 
+has already been answered.
+Otherwise, you can open an 
+[issue](https://github.com/jakob-wirbel/bhattlab_workflows_nf/issues/new) 
+in this repository. Please make sure to thorougly describe your problem 
+and to attach any relevant output and log files.
