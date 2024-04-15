@@ -2,15 +2,13 @@
 
 nextflow.enable.dsl=2
 
-
-include { input_check } from '../modules/input/input_check'
-include { input_check_assembly } from '../modules/input/input_assembly'
-
-/* BINNING
+/* BINNING on short reads
  * Runs metabat2, maxbin, and Concoct on the contigs, then DAS tool
  * Check quality by CheckM or sth (maybe others)?
 */
 
+include { input_check } from '../modules/input/input_check'
+include { input_check_assembly } from '../modules/input/input_assembly'
 include { binning_prep } from '../modules/binning/binning_prep'
 include { metabat } from '../modules/binning/metabat'
 include { maxbin } from '../modules/binning/maxbin'
@@ -19,19 +17,53 @@ include { dastool } from '../modules/binning/dastool'
 include { checkm } from '../modules/binning/checkm'
 include { gtdbtk } from '../modules/binning/gtdbtk'
 
+/* BINNING on long reads
+ * basically the same, but the preparation is different, since we
+ * have to map via minimap2 instead of bwa
+*/
+
+include { input_raw_lr } from '../modules/input/input_raw'
+include { binning_prep_lr } from '../modules/binning/binning_prep'
+include { binning_prep_lr_bam } from '../modules/binning/binning_prep'
+
 workflow {
-
-    ch_input_reads = input_check()
-    ch_input_assembly = input_check_assembly()
-    ch_input = ch_input_reads
-        .concat(ch_input_assembly)
-        .groupTuple()
-        .map{ sampleid, info -> tuple(sampleid, info[0], info[1]) }
     ch_versions = Channel.empty()
+    ch_input_assembly = input_check_assembly()
+    
+    if ( params.long_reads) {
+        ch_input_reads = input_raw_lr()
 
-    // PREPARE BINNING
-    ch_binning_prep = binning_prep(ch_input)
-    ch_versions = ch_versions.mix(ch_binning_prep.versions.first())
+        ch_input = ch_input_reads
+            .concat(ch_input_assembly)
+            .groupTuple()
+            .map{ sampleid, info -> tuple(sampleid, info[0], info[1])}
+
+        // PREPARE BINNING for long reads
+        ch_bams = binning_prep_lr_bam(ch_input)
+        ch_versions = ch_versions.mix(ch_bams.versions.first())
+
+        // Re-mix channels
+        ch_input_bin = ch_input
+            .concat(ch_bams)
+            .groupTuple(size=2)
+        ch_input_bin.view()
+
+
+        ch_binning_prep = binning_prep_lr(ch_input_bin)
+        ch_versions = ch_versions.mix(ch_binning_prep.versions.first())
+    } 
+    else {
+        ch_input_reads = input_check()
+
+        ch_input = ch_input_reads
+            .concat(ch_input_assembly)
+            .groupTuple()
+            .map{ sampleid, info -> tuple(sampleid, info[0], info[1]) }
+    
+        // PREPARE BINNING
+        ch_binning_prep = binning_prep(ch_input)
+        ch_versions = ch_versions.mix(ch_binning_prep.versions.first())
+    }
     
     // METABAT
     ch_metabat = metabat(ch_binning_prep.bin_prep)

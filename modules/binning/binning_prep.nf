@@ -41,3 +41,55 @@ process binning_prep {
 	"""
 }
 
+
+process binning_prep_lr_bam {
+	tag "BINNING_PREP bam on $sample_id"
+
+	input:
+	tuple val(sample_id), path(reads), path(contigs)
+
+	output:
+	tuple val(sample_id), path("align_${sample_id}.bam"), emit: bin_bam
+	path "versions.yml", emit: versions
+
+	script:
+	"""
+	minimap2 -x map-ont -t ${task.cpus} \
+		-a ${contigs} ${reads} | samtools sort --threads ${task.cpus} > ${sample_id}.bam
+
+	cat <<-END_VERSIONS > versions.yml
+	"${task.process}":
+	    minimap2: \$( minimap2 --version )
+	    samtools: \$( samtools --version | head -n 1 | sed -e "s/samtools //g" )
+	END_VERSIONS
+	"""
+
+}
+
+process binning_prep_lr {
+	tag "BINNING_PREP on $sample_id"
+
+	input:
+	tuple val(sample_id), path(reads), path(contigs), path(bam)
+
+	output:
+	tuple val(sample_id), path(contigs), path("${sample_id}.depth.txt"), path(bam), emit: bin_prep
+	path "versions.yml", emit: versions
+
+	script:
+	
+	"""
+
+	jgi_summarize_bam_contig_depths --outputDepth ${sample_id}.depth.txt \
+		--pairedContigs ${sample_id}.paired.txt --minContigLength 1000 \
+		--minContigDepth 1 --percentIdentity 50 ${bam}
+
+	jgi_summarize_bam_contig_depths -h 2> jgi.version || true
+	cat <<-END_VERSIONS > versions.yml
+	"${task.process}":
+	    samtools: \$( samtools --version | head -n 1 | sed -e "s/samtools //g" )
+	    metabat2: \$( head -n 1 jgi.version | sed -e "s/jgi_summarize_bam_contig_depths //g" | sed -e "s/ (Bioconda).*//g" )
+	END_VERSIONS
+	"""
+}
+

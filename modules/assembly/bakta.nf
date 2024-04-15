@@ -1,6 +1,6 @@
 
 process bakta {
-	publishDir params.outdir + "/bakta/", mode: params.publish_mode, pattern: "bakta_*"
+	publishDir params.outdir + "/assembly/bakta/", mode: params.publish_mode, pattern: "bakta_*"
   tag "Bakta on $sample_id"
 
 	input:
