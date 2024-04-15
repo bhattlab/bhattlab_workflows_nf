@@ -4,12 +4,16 @@ Preprocessing raw metagenomic data is necessary before any other application.
 Our preprocessing pipeline does the following tasks:
 
 - [optional] Combine samples sequenced over multiple lanes
-- Inital quality assessment
+- Inital quality assessment (via fastQC)
 - Deduplicaiton of exactly matching sequencing reads
 - Trimming of low quality bases and discarding of reads that fall below a
 length limit
 - Removal of reads that align against the host genome
-- Final quality check
+- Final quality check (fastQC)
+
+
+For long reads, it will perform quality assessment via NanoPlot and removal of 
+host reads only. See below for more details.
 
 
 ## Setup
@@ -78,6 +82,22 @@ This script will create the following outputs:
 	 reads. **This file is the input for downstream processes**
 - `versions_preprocessing.yml`: The versions for each of the tools using in the
 preprocessing pipeline
+
+## Long reads
+
+For long reads, the input file should look like this:
+```
+sampleID,reads
+Sample_1,</path/to/raw/reads/>raw_reads_1.fastq.gz
+Sample_2,</path/to/raw/reads/>raw_reads_2.fastq.gz
+Sample_3,</path/to/raw/reads/>raw_reads_3.fastq.gz
+```
+Please note that all the reads for one sample have to be combined into a single fastq file.
+
+Lastly, in the `params.yml` file you have to set the parameter `long_reads` to `true`.
+Unfortunately, you cannot combine long- and short-read sequencing, so you will
+have to run different workflows with different output directories.
+
 
 ## Other considerations
 
