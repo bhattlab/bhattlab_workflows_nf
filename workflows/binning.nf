@@ -91,7 +91,7 @@ workflow {
     // VERSION output
     ch_versions
         .unique()
-        .collectFile(name: params.outdir + 'versions_binning.yml')
+        .collectFile(name: params.outdir + '/versions_binning.yml')
 }
 
 workflow.onComplete {

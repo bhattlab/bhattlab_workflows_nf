@@ -104,7 +104,7 @@ workflow {
 	// VERSION output
 	ch_versions
 		.unique()
-		.collectFile(name: params.outdir + 'versions_preprocessing.yml')
+		.collectFile(name: params.outdir + '/versions_preprocessing.yml')
 
 }
 

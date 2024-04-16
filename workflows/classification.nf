@@ -40,7 +40,7 @@ workflow {
 	// VERSION output
 	ch_versions
 		.unique()
-		.collectFile(name: params.outdir + 'versions_classification.yml', sort: true)
+		.collectFile(name: params.outdir + '/versions_classification.yml', sort: true)
 }
 
 workflow.onComplete {

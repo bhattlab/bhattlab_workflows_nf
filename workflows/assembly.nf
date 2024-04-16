@@ -48,7 +48,7 @@ workflow {
 	// VERSION output
 	ch_versions
 		.unique()
-		.collectFile(name: params.outdir + 'versions_assembly.yml')
+		.collectFile(name: params.outdir + '/versions_assembly.yml')
 	// Assembly location output
 	ch_assembly.location.collectFile(name: params.outdir + '/stats/assemblies.csv', keepHeader: true)
 }
