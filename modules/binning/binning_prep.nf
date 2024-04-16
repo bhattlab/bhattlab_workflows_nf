@@ -49,7 +49,7 @@ process binning_prep_lr_bam {
 	tuple val(sample_id), path(reads), path(contigs)
 
 	output:
-	tuple val(sample_id), path("align_${sample_id}.bam"), emit: bin_bam
+	tuple val(sample_id), path("${sample_id}.bam"), emit: bin_bam
 	path "versions.yml", emit: versions
 
 	script:
