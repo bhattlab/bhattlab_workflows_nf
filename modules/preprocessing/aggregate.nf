@@ -82,7 +82,7 @@ process aggregatereports_lr {
   mv combination.csv sequencing_stats.csv
 
   echo "sampleID,reads" > preprocessed_reads_new.csv
-  cat $read_location >> preprocessed_reads_new.csv
+  cat !read_location >> preprocessed_reads_new.csv
   if [ -s $read_summary ];
   then
     cat $read_summary preprocessed_reads_new.csv > combination.csv
