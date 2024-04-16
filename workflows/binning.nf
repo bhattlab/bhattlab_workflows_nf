@@ -36,22 +36,12 @@ workflow {
         ch_input = ch_input_reads
             .concat(ch_input_assembly)
             .groupTuple()
-            .map{ sampleid, info -> tuple(sampleid, info[0], info[1])}
-        ch_input.view()
-        
+
         // PREPARE BINNING for long reads
         ch_bams = binning_prep_lr_bam(ch_input)
         ch_versions = ch_versions.mix(ch_bams.versions.first())
-        ch_bams.bin_bam.view()
 
-        // Re-mix channels
-        ch_input_bin = ch_input
-            .concat(ch_bams.bin_bam)
-            .groupTuple(size=2)
-        ch_input_bin.view()
-
-
-        ch_binning_prep = binning_prep_lr(ch_input_bin)
+        ch_binning_prep = binning_prep_lr(ch_bams.bin_bam)
         ch_versions = ch_versions.mix(ch_binning_prep.versions.first())
     } 
     else {
@@ -97,7 +87,7 @@ workflow {
     // GTDB-tk
     ch_gtdb = gtdbtk(ch_dastool.bins, params.gtdb_db_path)
     ch_versions = ch_versions.mix(ch_gtdb.versions.first())
-
+    
     // VERSION output
     ch_versions
         .unique()

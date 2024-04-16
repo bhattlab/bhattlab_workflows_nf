@@ -46,16 +46,16 @@ process binning_prep_lr_bam {
 	tag "BINNING_PREP bam on $sample_id"
 
 	input:
-	tuple val(sample_id), path(reads), path(contigs)
+	tuple val(sample_id), path(info)
 
 	output:
-	tuple val(sample_id), path("${sample_id}.bam"), emit: bin_bam
+	tuple val(sample_id), path("${info[0]}"), path("${info[1]}"), path("${sample_id}.bam"), emit: bin_bam
 	path "versions.yml", emit: versions
 
 	script:
 	"""
 	minimap2 -x map-ont -t ${task.cpus} \
-		-a ${contigs} ${reads} | samtools sort --threads ${task.cpus} > ${sample_id}.bam
+		-a ${info[1]} ${info[0]} | samtools sort --threads ${task.cpus} > ${sample_id}.bam
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
