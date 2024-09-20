@@ -8,8 +8,11 @@ publish_mode: "link"
 # Where are the input files?
 # The input file should be a comma-separated file with one line per sample, 
 # formatted in the following way:
-# sampleID,reverse,forward
+
+# sampleID,forward,reverse
 # Sample1,</path/to/raw/reads>/forward_reads.fastq.gz,</path/to/raw/reads>/reverse_reads.fastq.gz
+
+# Please note that you absolutely need the header (the first line)!
 samples: "/labs/asbhatt/data/bhatt_lab_sequencing/23-03-08_awigen2/all_samples.csv"
 
 # Where should the results end up?
