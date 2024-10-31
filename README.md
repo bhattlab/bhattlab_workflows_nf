@@ -23,7 +23,7 @@ find more workflows.
 If you're in the Bhatt lab and working on SCG, you should clone this 
 repository to your folder:
 ```bash
-git clone git@github.com:jakob-wirbel/bhattlab_workflows_nf.git
+git clone git@github.com:bhattlab/bhattlab_workflows_nf.git
 ```
 You can then run a workflow like this:
 

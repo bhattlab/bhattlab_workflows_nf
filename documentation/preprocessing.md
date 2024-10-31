@@ -39,7 +39,8 @@ nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 ## Input
 
 The input for this process is a file containing the location of the raw reads.
-This sample sheet file should look like this:  
+This sample sheet file should look like this (please note that you absolutely
+need the first line, i.e. the header):
 
 ```
 sampleID,forward,reverse
