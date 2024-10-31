@@ -22,24 +22,18 @@ process metaphlan {
 			--input_type fastq --nproc $task.cpus \
 			--bowtie2out ${sample_id}.bowtie2.bz2 \
 			--bowtie2db ${metaphlan_db_path} --tmp_dir tmp/ \
-			--unclassified_estimation \
+			--unclassified_estimation --offline \
 			-o metaphlan_${sample_id}.out
 	else
 		metaphlan ${reads[0]},${reads[1]} \
 			--input_type fastq --nproc $task.cpus \
 			--bowtie2out ${sample_id}.bowtie2.bz2 \
 			--bowtie2db ${metaphlan_db_path} --tmp_dir tmp/ \
-			--unclassified_estimation \
+			--unclassified_estimation --offline \
 			-o metaphlan_${sample_id}.out
 	fi
 
 	sgb_to_gtdb_profile.py -i metaphlan_${sample_id}.out -o metaphlan_${sample_id}_gtdb.out
-	sed -i '1i\
-		#mpa_vJan21_CHOCOPhlAnSGB_202103
-		' metaphlan_${sample_id}_gtdb.out
-	sed -i '1i\
-		#mpa_vJan21_CHOCOPhlAnSGB_202103
-		' metaphlan_${sample_id}_gtdb.out
 	sed -i '1i\
 		#mpa_vJan21_CHOCOPhlAnSGB_202103
 		' metaphlan_${sample_id}_gtdb.out
