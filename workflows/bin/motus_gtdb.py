@@ -12,9 +12,10 @@ with open(gtdb_file, 'r') as csvfile:
 	for row in reader:
 		tax_map[row[0]] = ';'.join(row[1:len(row)])
 tax_map["-1"] = "Unknown"
+tax_map["unassigned"] = "Unknown"
 
 new_data = {}
-pattern=r"(ref_|meta_|ext_)mOTU_v3_([0-9]+)"
+pattern=r"(ref_|meta_|ext_)mOTU_v[0-9]+_([0-9]+)"
 with open(in_file, 'r') as infile:
 	reader=csv.reader(infile, delimiter='\t')
 	next(reader)
