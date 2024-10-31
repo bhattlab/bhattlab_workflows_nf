@@ -1,14 +1,16 @@
 process concoct {
 	publishDir params.outdir + "/binning/concoct/", mode: params.publish_mode, pattern: "concoct_*"
 	tag "CONCOCT on $sample_id"
-
+	
+	afterScript "rm .command.err; rm .command.log"
+	
 	input:
 	tuple val(sample_id), path(contigs), path(depth), path(bam)
 
 	output:
 	tuple val(sample_id), path("concoct_${sample_id}/"), emit: bins
 	path "versions.yml", emit: versions
-
+	
 	script:
 	"""
 	# concoct runs in multiple steps
