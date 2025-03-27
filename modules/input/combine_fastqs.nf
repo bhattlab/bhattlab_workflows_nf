@@ -4,7 +4,7 @@ process combine_fastqs {
 	tuple val(sample_id), path(reads)
 
 	output:
-	tuple val(sample_id), path("${sample_id}_{1,2}.fastq.gz")
+	tuple val(sample_id), path("${sample_id}_{1,2}.fastq.gz", includeInputs: true) 
 	
 	shell:
 	'''
