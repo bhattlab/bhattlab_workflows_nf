@@ -32,7 +32,7 @@ workflow {
   // VERSION output
   ch_versions
     .unique()
-    .collectFile(name: params.outdir + '/phage_annotation_versions.yml')
+    .collectFile(name: params.outdir + '/versions_viral_annotation.yml')
 }
 
 workflow.onComplete {
