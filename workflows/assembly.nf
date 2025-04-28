@@ -2,11 +2,16 @@
 
 nextflow.enable.dsl=2
 
+// some global parameters, to be changed in the paramter file
+params.long_reads=false
+params.single_end=false
+
 /* ASSEMBLY for short reads
  run megahit, bakta, and quast
 */
 
 include { input_check } from '../modules/input/input_check'
+include { input_check_single_end } from '../modules/input/input_check'
 include { megahit } from '../modules/assembly/megahit'
 include { quast } from '../modules/assembly/quast'
 include { combine_quast } from '../modules/assembly/quast'
@@ -29,8 +34,13 @@ workflow {
 		ch_assembly = flye(ch_processed_reads)
 		ch_versions = ch_versions.mix(ch_assembly.versions.first())
 	} else {
-		// Input
-		ch_processed_reads = input_check()
+		if ( params.single_end ) {
+			// different input
+			ch_processed_reads = input_check_single_end()
+		} else {
+			// Input
+			ch_processed_reads = input_check()
+		}
 		
 		// ASSEMBLY
 		ch_assembly = megahit(ch_processed_reads)
