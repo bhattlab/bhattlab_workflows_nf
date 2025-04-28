@@ -17,12 +17,25 @@ process binning_prep {
 	mv $contigs ./idx_${sample_id}
 	bwa index ./idx_${sample_id}/${contigs}
 	
-	bwa mem -t $task.cpus ./idx_${sample_id}/${contigs} ${reads[0]} ${reads[1]} \
-		| samtools sort --threads $task.cpus > align_${sample_id}.bam
+	if [[ -f ${reads[1]} ]]
+	then
+		echo "paired reads!"
+		bwa mem -t $task.cpus ./idx_${sample_id}/${contigs} ${reads[0]} ${reads[1]} | samtools sort --threads $task.cpus > align_${sample_id}.bam
+		if [[ -f ${reads[2]} ]]
+		then
+			# what about orphans? guess we ignore them for now?
+			# seems that like jgi_summarize can take several bam files?
+			# update: map them as well and merge the bamfiles
+			echo "Also map the orphans!"
+			bwa mem -t $task.cpus ./idx_${sample_id}/${contigs} ${reads[2]} | samtools sort --threads $task.cpus > align_orphans_${sample_id}.bam
+			mv align_${sample_id}.bam align_PE_${sample_id}.bam
+			samtools merge -o align_${sample_id}.bam --threads $task.cpus align_PE_${sample_id}.bam align_orphans_${sample_id}.bam
+		fi
+	else
+		echo "single-end reads!"
+		bwa mem -t $task.cpus ./idx_${sample_id}/${contigs} ${reads} | samtools sort --threads $task.cpus > align_${sample_id}.bam
+	fi
 	samtools sort -@ $task.cpus align_${sample_id}.bam
-
-	# what about singles? guess we ignore them for now?
-	# seems that like jgi_summarize can take several bam files?
 
 	jgi_summarize_bam_contig_depths --outputDepth ${sample_id}.depth.txt \
 		--pairedContigs ${sample_id}.paired.txt --minContigLength 1000 \
