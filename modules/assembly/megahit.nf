@@ -12,7 +12,14 @@ process megahit {
 
 	shell:
 	"""
-	megahit -1 ${reads[0]} -2 ${reads[1]} -o megahit_${sample_id} --out-prefix ${sample_id} -t ${task.cpus} 
+	if [[ -f ${reads[1]} ]]
+	then
+		megahit -1 ${reads[0]} -2 ${reads[1]} -o megahit_${sample_id} \
+			--out-prefix ${sample_id} -t ${task.cpus} 
+	else
+		megahit -r ${reads} -o megahit_${sample_id} \
+			--out-prefix ${sample_id} -t ${task.cpus} 
+	fi
 	mv megahit_${sample_id}/${sample_id}.contigs.fa ./
 	rm -r megahit_${sample_id}
 
