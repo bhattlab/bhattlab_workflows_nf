@@ -27,3 +27,22 @@ process combine_fastqs {
 }
 
 
+process combine_fastqs_single {
+	input:
+	tuple val(sample_id), path(reads)
+
+	output:
+	tuple val(sample_id), path("${sample_id}_combined.fastq.gz") 
+	
+	shell:
+	'''
+	echo !{sample_id}
+	if [[ -f !{reads[1]} ]]
+	then
+		unpigz -p 2 -c !{reads} > "!{sample_id}_combined.fastq"
+		pigz -p 2 !{sample_id}_combined.fastq
+	else
+		ln -s !{reads} !{sample_id}_combined.fastq.gz
+	fi
+	'''
+}

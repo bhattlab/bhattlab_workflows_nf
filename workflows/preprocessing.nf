@@ -2,6 +2,10 @@
 
 nextflow.enable.dsl=2
 
+// some global parameters, to be changed in the paramter file
+params.long_reads=false
+params.single_end=false
+
 /* PREPROCESSING of short reads
  * Processes for fastqc, multiqc, and read processing, including
  * deduplication, trimming, human read removal
@@ -9,6 +13,8 @@ nextflow.enable.dsl=2
 
 include { input_raw } from '../modules/input/input_raw'
 include { combine_fastqs } from '../modules/input/combine_fastqs'
+include { input_raw_single_end } from '../modules/input/input_raw'
+include { combine_fastqs_single } from '../modules/input/combine_fastqs'
 include { fastqc as fastqc_pre } from '../modules/preprocessing/fastqc'
 include { fastqc as fastqc_post } from '../modules/preprocessing/fastqc'
 include { multiqc as multiqc_pre } from '../modules/preprocessing/multiqc'
@@ -23,10 +29,12 @@ include { aggregatereports } from '../modules/preprocessing/aggregate'
 */
 
 include { input_raw_lr } from '../modules/input/input_raw'
+// include { fastp } from '../modules/preprocessing/fastp'
 include { nanoplot as nanoplot_pre } from '../modules/preprocessing/nanoplot'
 include { nanoplot as nanoplot_post } from '../modules/preprocessing/nanoplot'
 include { hostremoval_lr } from '../modules/preprocessing/hostremoval'
 include { aggregatereports_lr } from '../modules/preprocessing/aggregate'
+
 
 workflow {
 
@@ -57,13 +65,20 @@ workflow {
   		params.outdir + "/stats/sequencing_stats.tsv")
 	}
 	else {
-		ch_read_pairs = input_raw()
+		if ( params.single_end ) {
+			ch_read_pairs = input_raw_single_end()
+			// Combine fastqs that were sequenced across multiple lanes
+                	ch_reads_combined = combine_fastqs_single( ch_read_pairs
+                        	.groupTuple()
+                        	.map{ sample, reads -> [sample, reads.flatten()] } )
+		} else {
+			ch_read_pairs = input_raw()
+			// Combine fastqs that were sequenced across multiple lanes
+                	ch_reads_combined = combine_fastqs( ch_read_pairs
+                        	.groupTuple()
+                        	.map{ sample, reads -> [sample, reads.flatten()] } )
+		}
 
-		// Combine fastqs that were sequenced across multiple lanes
-		ch_reads_combined = combine_fastqs( ch_read_pairs
-			.groupTuple()
-			.map{ sample, reads -> [sample, reads.flatten()] } )
-		
 		// PREPROCESSING
 		// FASTQC
 		ch_fastqc = fastqc_pre(ch_reads_combined, "pre")

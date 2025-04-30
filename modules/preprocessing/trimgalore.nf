@@ -15,12 +15,21 @@ process trimgalore {
 
     script:
     """
-    trim_galore --quality ${params.trimgalore_quality} --length ${params.trimgalore_min_read_length} \
-        --paired ${reads[0]} ${reads[1]} --retain_unpaired
-    zcat -f ${sample_id}_dedup_R1_unpaired_1.fq.gz ${sample_id}_dedup_R2_unpaired_2.fq.gz | pigz -b 32 > ${sample_id}_val_unpaired.fq.gz
-    rm ${sample_id}_dedup_R1_unpaired_1.fq.gz ${sample_id}_dedup_R2_unpaired_2.fq.gz
-    mv ${sample_id}_dedup_R1_val_1.fq.gz ${sample_id}_R1_val_1.fq.gz
-    mv ${sample_id}_dedup_R2_val_2.fq.gz ${sample_id}_R2_val_2.fq.gz
+    if [[ -f ${reads[1]} ]]
+    then
+        trim_galore --quality ${params.trimgalore_quality} --length ${params.trimgalore_min_read_length} \
+            --paired ${reads[0]} ${reads[1]} --retain_unpaired
+        zcat -f ${sample_id}_dedup_R1_unpaired_1.fq.gz ${sample_id}_dedup_R2_unpaired_2.fq.gz | pigz -b 32 > ${sample_id}_val_unpaired.fq.gz
+        rm ${sample_id}_dedup_R1_unpaired_1.fq.gz ${sample_id}_dedup_R2_unpaired_2.fq.gz
+        mv ${sample_id}_dedup_R1_val_1.fq.gz ${sample_id}_R1_val_1.fq.gz
+        mv ${sample_id}_dedup_R2_val_2.fq.gz ${sample_id}_R2_val_2.fq.gz
+        
+    else
+        trim_galore --quality ${params.trimgalore_quality} --length ${params.trimgalore_min_read_length} ${reads}
+        mv ${sample_id}_dedup_SE_trimmed.fq.gz ${sample_id}_val_unpaired.fq.gz
+    fi
+
+    # get the read count
     readcount_paired=\$(echo \$((\$(zcat ${sample_id}_R1_val_1.fq.gz | wc -l) / 2)))
     readcount_unpaired=\$(echo \$((\$(zcat ${sample_id}_val_unpaired.fq.gz | wc -l) / 4)))
     

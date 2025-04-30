@@ -72,7 +72,7 @@ workflow input_raw_single_end {
             .from(file(params.raw_reads))
             .splitCsv(header: true)
             .map { row ->
-                    if (row.size() == 3) {
+                    if (row.size() == 2) {
                         def sampleid = row.sampleID
                         def reads = row.reads ? file(row.reads, checkIfExists: true) : false
                         // Check if given combination is valid
@@ -93,3 +93,4 @@ workflow input_raw_single_end {
     emit:
     reads = ch_reads
 }
+

@@ -16,20 +16,39 @@ process hostremoval {
 
     script:
     """
-    bwa mem -t $task.cpus ${host_genome_location}/${bwa_index_base} ${reads[0]} ${reads[1]} | \
-        samtools fastq -t -T BX -f 4 -1 ${sample_id}_cleaned_1.fastq.gz -2 ${sample_id}_cleaned_2.fastq.gz -s ${sample_id}_cleanedtemp_singletons.fastq.gz -
+    if [[ -f ${reads[1]} ]]
+    then
+        bwa mem -t $task.cpus ${host_genome_location}/${bwa_index_base} ${reads[0]} ${reads[1]} | \
+            samtools fastq -t -T BX -f 4 -1 ${sample_id}_cleaned_1.fastq.gz -2 ${sample_id}_cleaned_2.fastq.gz -s ${sample_id}_cleanedtemp_singletons.fastq.gz -
         # run on unpaired reads
-    bwa mem -t $task.cpus ${host_genome_location}/${bwa_index_base} ${reads[2]} | \
-        samtools fastq -t -T BX -f 4  - > ${sample_id}_cleanedtemp_singletons2.fastq.gz
-    # combine singletons
-    zcat -f ${sample_id}_cleanedtemp_singletons.fastq.gz ${sample_id}_cleanedtemp_singletons2.fastq.gz | pigz > ${sample_id}_cleaned_orphans.fastq.gz
-    rm ${sample_id}_cleanedtemp_singletons.fastq.gz ${sample_id}_cleanedtemp_singletons2.fastq.gz
-    readcount_paired=\$(echo \$((\$(zcat ${sample_id}_cleaned_1.fastq.gz | wc -l) / 2)))
-    readcount_unpaired=\$(echo \$((\$(zcat ${sample_id}_cleaned_orphans.fastq.gz | wc -l) / 4)))
-    totalcount=\$(echo \$((\$readcount_paired + \$readcount_unpaired)))
-    echo ${sample_id}"\trmhost\t"\$totalcount >> "${stats}"
-    echo ${sample_id}"\torphans\t"\${readcount_unpaired} >> "${stats}"
-    echo "${sample_id},${params.outdir}/preprocessed_reads/${sample_id}_cleaned_1.fastq.gz,${params.outdir}/preprocessed_reads/${sample_id}_cleaned_2.fastq.gz,${params.outdir}/preprocessed_reads/${sample_id}_cleaned_orphans.fastq.gz" > ${sample_id}.location
+        bwa mem -t $task.cpus ${host_genome_location}/${bwa_index_base} ${reads[2]} | \
+            samtools fastq -t -T BX -f 4  - > ${sample_id}_cleanedtemp_singletons2.fastq.gz
+        # combine singletons
+        zcat -f ${sample_id}_cleanedtemp_singletons.fastq.gz ${sample_id}_cleanedtemp_singletons2.fastq.gz | pigz > ${sample_id}_cleaned_orphans.fastq.gz
+        rm ${sample_id}_cleanedtemp_singletons.fastq.gz ${sample_id}_cleanedtemp_singletons2.fastq.gz
+
+        # output the location
+        echo "${sample_id},${params.outdir}/preprocessed_reads/${sample_id}_cleaned_1.fastq.gz,${params.outdir}/preprocessed_reads/${sample_id}_cleaned_2.fastq.gz,${params.outdir}/preprocessed_reads/${sample_id}_cleaned_orphans.fastq.gz" > ${sample_id}.location
+        readcount_paired=\$(echo \$((\$(zcat ${sample_id}_cleaned_1.fastq.gz | wc -l) / 2)))
+        readcount_unpaired=\$(echo \$((\$(zcat ${sample_id}_cleaned_orphans.fastq.gz | wc -l) / 4)))
+        totalcount=\$(echo \$((\$readcount_paired + \$readcount_unpaired)))
+
+        echo ${sample_id}"\trmhost\t"\$totalcount >> "${stats}"
+        echo ${sample_id}"\torphans\t"\${readcount_unpaired} >> "${stats}"
+    else
+        bwa mem -t $task.cpus -o single_mapped.sam ${host_genome_location}/${bwa_index_base} ${reads} 
+        samtools fastq --threads ${task.cpus} -t -T BX -f 4 single_mapped.sam > ${sample_id}_cleaned.fastq
+        rm single_mapped.sam
+        pigz -p ${task.cpus} ${sample_id}_cleaned_orphans.fastq
+
+        # output the location
+        echo "${sample_id},${params.outdir}/preprocessed_reads/${sample_id}_cleaned.fastq.gz" > ${sample_id}.location
+        
+        readcount_unpaired=\$(echo \$((\$(zcat ${sample_id}_cleaned.fastq.gz | wc -l) / 4)))
+        
+        echo ${sample_id}"\trmhost\t"\${readcount_unpaired} >> "${stats}"
+        echo ${sample_id}"\torphans\t"\${readcount_unpaired} >> "${stats}"
+    fi
 
     bwa 2> bwa.version || true
     cat <<-END_VERSIONS > versions.yml
