@@ -16,7 +16,7 @@ find more workflows.
     - [Metagenomic **Binning**](documentation/binning.md)
     - [Metagenomic **Classification**](documentation/classification.md)
     - [**Sourmash** read comparison](documentation/sourmash.md)
-    - [**Viral** contig prediction](manual/viral.md) 
+    - [**Viral** contig prediction](documentation/viral.md) 
 
 ### Quickstart
 
