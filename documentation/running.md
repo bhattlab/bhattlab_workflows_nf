@@ -23,10 +23,24 @@ the [Setup](./setup.md) documentation for guidance on how to edit this file.
 Once you have your input data and `params.yml` file ready, you can then run
 the workflow like this:
 ```bash
-module load java/18.0.2.1
-module load nextflow/22.10.5
+module load nextflow/24.04.4
 
 nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
+	-c </path/to/this/repo>/config/run.config \
+	-params-file ./params.yml \
+	-with-trace -with-report
+```
+
+## Running the next workflow
+
+After preprocessing, you might want to run assembly or classification. You do
+not have to adjust the parameter file for this, as the workflow will find
+the correct input file if the `outdir` parameter is the same:
+
+```bash
+module load nextflow/24.04.4
+
+nextflow run </path/to/this/repo>/workflows/assembly.nf \
 	-c </path/to/this/repo>/config/run.config \
 	-params-file ./params.yml \
 	-with-trace -with-report
@@ -35,11 +49,10 @@ nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 ## Second project 
 
 If you want to run the same preprocessing then for a different project,
-simply duplicate the `params.yml` file and adjust the `output` and `samples`
+simply duplicate the `params.yml` file and adjust the `outdir` and `raw_reads`
 parameter and you can just run the same workflow on your new data like this:
 ```bash
-module load java/18.0.2.1
-module load nextflow/22.10.5
+module load nextflow/24.04.4
 
 nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 	-c </path/to/this/repo>/config/run.config \
@@ -51,6 +64,23 @@ Please note that you can run only a single nextflow workflow at the same time
 from the same directory. Nextflow will lock the current working directory (
 from which you called `nextflow run` and no other workflow can be started 
 while the other one is still running).
+
+## Additional samples for preprocessing
+
+If you want to run the same preprocessing workflow on additional samples 
+from the same overall project, you can. Just supply a new `raw_reads` file, but
+use the same `params.yml` file and the workflow will add the newly processed
+reads to the same `outdir`. It will also add the processing statistics (
+reads after deduplication, etc) to the files in the stats folder.
+
+```bash
+module load nextflow/24.04.4
+
+nextflow run </path/to/this/repo>/workflows/assembly.nf \
+	-c </path/to/this/repo>/config/run.config \
+	-params-file ./params.yml \
+	-with-trace -with-report --raw_reads additional_samples.csv
+```
 
 
 ## Troubleshooting

@@ -23,6 +23,8 @@ the [`run.config`](../config/run.config) file as well.
  	- MetaPhlAn4 database
  	- mOTUs3 database
  	- CheckM database
+ 	- GTDB-tk database
+ 	- Bakta database
  	- VIBRANT database
  	- geNomad database
  2. Adjusting the `params.yml` file
@@ -34,8 +36,7 @@ Please note that you need the right version of java as well for it to work.
 Therefore, add the following lines to your script:
 
 ```bash
-module load java/18.0.2.1
-module load nextflow/22.10.5
+module load nextflow/24.04.4
 ```
 
 If you are running these workflows on another system, good luck! You can find
@@ -124,13 +125,77 @@ tar -zxvf checkm_data_2015_01_16.tar.gz
 rm checkm_data_2015_01_16.tar.gz
 ```
 
+### GTDB-tk database
+
+The documentation for GTDB-tk can be found 
+[here]().
+The current version of this workflow uses the version `v2.3.2`, so you will
+need the following database:
+
+```bash
+cd <your-gtdbtk-database-location>
+wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/auxillary_files/gtdbtk_r214_data.tar.gz
+md5sum gtdbtk_r214_data.tar.gz
+# expected output: 630745840850c532546996b22da14c27
+# if you do not see this output, something went wrong and you need to download
+# the database again!
+tar -xvzf gtdbtk_r214_data.tar.gz
+rm gtdbtk_r214_data.tar.gz
+```
+
+### Bakta database
+
+The bakta database is hosted on Zenodo. You can check out the 
+[Bakta Github](https://github.com/oschwengers/bakta?tab=readme-ov-file#database)
+to find more information about the database. The current version
+of these workflows use `bakta v1.8.2`, so you will need the 
+`v_5.0` of the database:
+
+```bash
+cd <your-bakta-database-location>
+wget https://zenodo.org/records/7669534/files/db.tar.gz
+md5sum db.tar.gz
+# expected output: 3200136a0a32b3c33d1cb348ab6b87de 
+# if you do not see this output, something went wrong and you need to download
+# the database again!
+tar -zxvf db.tar.gz
+rm db.tar.gz
+```
+
+Additionally, you will have to run the `armfinder-update`, because otherwise
+the workflow will fail. You can use the singularity container for that:
+
+```bash
+cd <your-bakta-database-location>
+cd db
+singularity shell --bind ./:/mnt docker://ghcr.io/jakob-wirbel/micromamba-focal-longread:latest
+cd /mnt
+amrfinder_update --force_update --database ./amrfinderplus-db/
+```
+
 ### VIBRANT database
 
-tbd
+To download the database for VIRBANT, we can again use the already
+prepared singularity container:
+
+```bash
+cd <your-vibrant-database-location>
+singularity shell --bind ./:/mnt docker://ghcr.io/jakob-wirbel/micromamba-focal-virus:latest
+cd /mnt
+download-db.sh .
+```
 
 ### geNomad database
 
-tbd
+We also need to download the geNomad database, again using the already
+prepared singularity container:
+
+```bash
+cd <your-genomad-database-location>
+singularity shell --bind ./:/mnt docker://ghcr.io/jakob-wirbel/micromamba-focal-genomad:latest
+cd /mnt
+genomad download-database .
+```
 
 ## Adjusting the `params.yml` file
 
@@ -143,8 +208,8 @@ for example using `nano`.
 
 ```bash
 cd <your-project-location>
-cp <bhattlab_workflows_nf-location>/config/params.yml ./params_projectx.yml
-nano ./params_projectx.yml
+cp <bhattlab_workflows_nf-location>/config/params.yml ./params_project_x.yml
+nano ./params_project_x.yml
 ```
 
 Adjust the parameters in the file to those fitting your system/project. 

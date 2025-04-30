@@ -1,6 +1,10 @@
 # Preprocessing
 
 Preprocessing raw metagenomic data is necessary before any other application. 
+
+
+### Short reads
+
 Our preprocessing pipeline does the following tasks:
 
 - [optional] Combine samples sequenced over multiple lanes
@@ -12,8 +16,13 @@ length limit
 - Final quality check (fastQC)
 
 
-For long reads, it will perform quality assessment via NanoPlot and removal of 
-host reads only. See below for more details.
+### Long reads
+
+For long reads, it will perform these steps:
+- [optional] Combine samples sequenced over multiple lanes
+- Inital quality assessment (via NanoPlot)
+- Removal of reads that align against the host genome
+- Final quality check (NanoPlot)
 
 
 ## Setup
@@ -38,6 +47,8 @@ nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 
 ## Input
 
+### Paired-end short reads
+
 The input for this process is a file containing the location of the raw reads.
 This sample sheet file should look like this (please note that you absolutely
 need the first line, i.e. the header):
@@ -59,13 +70,48 @@ In this case, the sample `Sample_1` has been sequenced over two lanes. The
 workflow will combine these two lanes and then carry out the rest of the 
 processes.
 
-You can either specify the `samples` parameter in the `params.yml` file or you
+### Single-end short reads 
+
+For single-end short reads, the sample sheet should look like this:
+
+```
+sampleID,reads
+Sample_1,</path/to/raw/reads/>raw_reads_1.fastq.gz
+Sample_1,</path/to/raw/reads/>raw_reads_1_second_lane.fastq.gz
+Sample_2,</path/to/raw/reads/>raw_reads_2.fastq.gz
+Sample_3,</path/to/raw/reads/>raw_reads_3.fastq.gz
+```
+
+Also, you need to set the `single_end` parameter in the `params.yml`
+file to `true`.
+
+### Long reads
+
+For long reads, the sample sheet should look like this:
+
+```
+sampleID,reads
+Sample_1,</path/to/raw/reads/>raw_reads_1.fastq.gz
+Sample_1,</path/to/raw/reads/>raw_reads_1_second_lane.fastq.gz
+Sample_2,</path/to/raw/reads/>raw_reads_2.fastq.gz
+Sample_3,</path/to/raw/reads/>raw_reads_3.fastq.gz
+```
+
+Also, you need to set the `long_reads` parameter in the `params.yml`
+file to `true`.
+
+Please note that you cannot combine short- and long-read sequencing
+and that all the long reads should come from the same platform.
+
+### Specifying the input
+
+You can either specify the `raw_reads` parameter in the `params.yml` file or you
 can supply it when calling the nextflow process like this:  
 ```bash
 nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 	-c </path/to/this/repo>/config/run.config \
 	-params-file params.yml \
-	-with-trace -with-report --samples ./sample_sheet.csv
+	-with-trace -with-report --raw_reads ./sample_sheet.csv
 ```
 
 ## Output
@@ -83,21 +129,6 @@ This script will create the following outputs:
 	 reads. **This file is the input for downstream processes**
 - `versions_preprocessing.yml`: The versions for each of the tools using in the
 preprocessing pipeline
-
-## Long reads
-
-For long reads, the input file should look like this:
-```
-sampleID,reads
-Sample_1,</path/to/raw/reads/>raw_reads_1.fastq.gz
-Sample_2,</path/to/raw/reads/>raw_reads_2.fastq.gz
-Sample_3,</path/to/raw/reads/>raw_reads_3.fastq.gz
-```
-Please note that all the reads for one sample have to be combined into a single fastq file.
-
-Lastly, in the `params.yml` file you have to set the parameter `long_reads` to `true`.
-Unfortunately, you cannot combine long- and short-read sequencing, so you will
-have to run different workflows with different output directories.
 
 
 ## Other considerations

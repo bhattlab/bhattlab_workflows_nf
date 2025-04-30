@@ -28,8 +28,7 @@ git clone git@github.com:bhattlab/bhattlab_workflows_nf.git
 You can then run a workflow like this:
 
 ```bash
-module load java/18.0.2.1
-module load nextflow/22.10.5
+module load nextflow/24.04.4
 
 nextflow run </path/to/this/repo>/workflows/preprocessing.nf \
 	-c </path/to/this/repo>/config/run.config \

@@ -36,7 +36,18 @@ nextflow run </path/to/this/repo>/workflows/binning.nf \
 
 The input for this process is a file containing the location of the 
 preprocessed reads and another file containing the location of the assembly. 
-The first input file should look like this:  
+
+The assembly input should look like this:
+
+```
+sampleID,contigs
+Sample_1,</path/to/assembly/>contigs_sample1.fa
+Sample_2,</path/to/assembly/>contigs_sample2.fa
+```
+
+For the preprocessed reads input file, the input is the same as for 
+the assembly workflow.
+For paired-end short read data, it would look like this:
 
 ```
 sampleID,forward,reverse,orphans
@@ -44,30 +55,33 @@ Sample_1,</path/to/reads/>reads_sample1_1.fq.gz,</path/to/reads/>reads_sample1_2
 Sample_2,</path/to/reads/>reads_sample2_1.fq.gz,</path/to/reads/>reads_sample2_2.fq.gz,</path/to/reads/>reads_sample2_orphans.fq.gz
 ```
 
-The second input file should look like this:
+For single-end short read data or long-read data, the input would be:
 ```
-ampleID,contigs
-Sample_1,</path/to/assembly/>contigs_sample1.fa
-Sample_2,</path/to/assembly/>contigs_sample2.fa
+sampleID,reads
+Sample_1,</path/to/reads/>cleaned_reads_1.fq.gz
+Sample_2,</path/to/reads/>cleaned_reads_2.fq.gz
 ```
+and you again would have to set the `single_end` or `long_read`
+parameters to `true`.
+
+
+### Custom input
 
 If you used the [preprocessing]('./preprocessing.md') and 
-[assembly]('./assembly.md') workflow, you will not have to provide both files
-as input. Instead, the workflow will use the files already present in the
-specified `outdir` location.
+[assembly]('./assembly.md') workflows, you will not 
+have to provide the sheet with the preprocessed reads and the assemblies. 
+The output of these workflows will be found by the binning workflow.
 
-
-However, if you want to run binning only on some samples or on samples 
-processed in a different way, you can either specify the `input` parameter 
-(for the preprocessed reads) and the `input_assembly` parameter (for the
-assembly) in the `params.yml` file or you can supply both when calling the 
-nextflow process like this:  
+If you want to run binning only on some samples or on samples 
+processed in a different way, you can either specify the `preprocessed_reads` 
+and `assemblies` paramter in the `params.yml` file or you can 
+supply them when calling the nextflow process like this:  
 ```bash
 nextflow run </path/to/this/repo>/workflows/binning.nf \
 	-c </path/to/this/repo>/config/run.config \
 	-params-file params.yml \
-	-with-trace -with-report \
-	--input ./preprocessed_reads.csv --input_assembly ./assemblies.csv
+	-with-trace -with-report --preprocessed_reads ./preprocessed_reads.csv \
+	--assemblies ./assemblies.csv
 ```
 
 ## Output
@@ -83,27 +97,3 @@ This script will create the following outputs:
 	- `gtdb`: Folder containing the GTDB-tk output files
 - `versions_binning.yml`: The versions for each of the tools using in the
 binning pipeline
-
-## Long reads
-
-As for all the long read workflows, you will have to set the `long_reads` parameter
-in the `params.yml` to `true`.
-
-Additionally, the input file with the cleaned reads should only have two columns:
-
-```
-sampleID,reads
-Sample_1,</path/to/reads/>cleaned_reads_1.fq.gz
-Sample_2,</path/to/reads/>cleaned_reads_2.fq.gz
-```
-
-Lastly, you will have to supply the `samples` parameter when calling 
-nextflow like this:
-
-```bash
-nextflow run </path/to/this/repo>/workflows/binning.nf \
-	-c </path/to/this/repo>/config/run.config \
-	-params-file params.yml \
-	-with-trace -with-report \
-	--samples ./cleaned_reads.csv --input_assembly ./assemblies.csv
-```
