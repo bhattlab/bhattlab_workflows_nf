@@ -1,3 +1,5 @@
+params.flye_overlap = '[auto]'
+
 process flye {
 	publishDir params.outdir + "/assembly/flye/", mode: params.publish_mode, pattern: "flye_*"
 	tag "Meta-Flye on $sample_id"
@@ -14,7 +16,8 @@ process flye {
 	shell:
 	"""
 	flye --nano-hq ${reads} --out-dir flye_${sample_id} --meta \
-		--threads ${task.cpus} --genome-size 200m
+		--threads ${task.cpus} --genome-size 200m \
+		--min-overlap ${params.flye_overlap}
 	cp ./flye_${sample_id}/assembly.fasta ./${sample_id}.contigs.fa
 
 	cat <<-END_VERSIONS > versions.yml
