@@ -1,4 +1,4 @@
-params.flye_overlap = '[auto]'
+params.flye_overlap = 'auto'
 
 process flye {
 	publishDir params.outdir + "/assembly/flye/", mode: params.publish_mode, pattern: "flye_*"
