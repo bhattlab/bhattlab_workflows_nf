@@ -92,11 +92,11 @@ workflow {
     ch_versions = ch_versions.mix(ch_dastool.versions.first())
 
     // run checkM on DAStool bins
-    ch_checkm = checkm(ch_dastool.bins, params.checkm_db_path)
+    ch_checkm = checkm(ch_dastool.bins_checkm, params.checkm_db_path)
     ch_versions = ch_versions.mix(ch_checkm.versions.first())
 
     // GTDB-tk
-    ch_gtdb = gtdbtk(ch_dastool.bins, params.gtdb_db_path)
+    ch_gtdb = gtdbtk(ch_dastool.bins_gtdbtk, params.gtdb_db_path)
     ch_versions = ch_versions.mix(ch_gtdb.versions.first())
     
     // VERSION output
