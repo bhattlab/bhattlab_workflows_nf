@@ -1,0 +1,24 @@
+# syntax=docker/dockerfile:1
+FROM mambaorg/micromamba:focal
+
+USER root
+RUN apt-get update && \
+  apt-get install -yq tzdata && \
+  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  dpkg-reconfigure -f noninteractive tzdata
+RUN apt-get install -yq git
+USER $MAMBA_USER
+
+RUN <<EOF cat > virus.yml
+name: virus
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - cenote-taker3=3.4.1
+EOF
+
+RUN micromamba install -y -n base -f virus.yml && \
+  micromamba clean --all --yes
+
+ENV PATH "/opt/conda/bin:$PATH"

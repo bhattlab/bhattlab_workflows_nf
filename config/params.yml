@@ -93,5 +93,8 @@ genomad_db_path: "/<path-to-your-databases>/genomad/v1.6/genomad_db/"
 # VIBRANT database
 vibrant_db_path: "/<path-to-your-databases>/vibrant_db/v1.2.1"
 
+# Cenote-taker3 database
+ct3_db_path: "/<path-to-your-databases>/ct3_db"
+
 # CheckV database
 checkv_db_path: "/<path-to-your-databases>/checkv_db/checkv-db-v1.5"
