@@ -1,0 +1,31 @@
+# syntax=docker/dockerfile:1
+FROM mambaorg/micromamba:focal
+
+USER root
+RUN apt-get update && \
+  apt-get install -yq tzdata && \
+  ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+  dpkg-reconfigure -f noninteractive tzdata
+USER $MAMBA_USER
+
+RUN <<EOF cat > bakta.yml
+name: bakta
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - bakta=1.11.3
+EOF
+
+RUN micromamba install -y -n base -f bakta.yml && \
+  micromamba clean --all --yes
+
+
+RUN sed -i 's/insdc.write_features(data, features, genbank_path, embl_path)/#insdc.write_features(data, features, genbank_path, embl_path)/g' /opt/conda/lib/python3.11/site-packages/bakta/main.py
+RUN sed -i 's/fasta.export_sequences(data/#fasta.export_sequences(data/g' /opt/conda/lib/python3.11/site-packages/bakta/main.py
+RUN sed -i 's/fasta.write_ffn/#fasta.write_ffn/g' /opt/conda/lib/python3.11/site-packages/bakta/main.py
+RUN sed -i 's/tsv.write_feature_inferences/#tsv.write_feature_inferences/g' /opt/conda/lib/python3.11/site-packages/bakta/main.py
+RUN sed -i 's/json.write_json/#json.write_json/g' /opt/conda/lib/python3.11/site-packages/bakta/main.py
+
+
+ENV PATH "/opt/conda/bin:$PATH"
