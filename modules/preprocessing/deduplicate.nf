@@ -11,12 +11,11 @@ process deduplicate {
 
     script:
     """
-    if [[ -f ${reads[1]} ]]
+    if ${params.single_end}
     then
-        hts_SuperDeduper -1 ${reads[0]} -2 ${reads[1]} -f ${sample_id}_dedup -F
-    else
         hts_SuperDeduper -U ${reads} -f ${sample_id}_dedup -F
-        
+    else
+        hts_SuperDeduper -1 ${reads[0]} -2 ${reads[1]} -f ${sample_id}_dedup -F
     fi
     
     count_deduplicate.py ${sample_id} stats.log > counts_${sample_id}.txt

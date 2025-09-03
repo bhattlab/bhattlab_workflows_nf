@@ -29,9 +29,10 @@ include { aggregatereports } from '../modules/preprocessing/aggregate'
 */
 
 include { input_raw_lr } from '../modules/input/input_raw'
-// include { fastp } from '../modules/preprocessing/fastp'
+include { fastp } from '../modules/preprocessing/nanoplot'
 include { nanoplot as nanoplot_pre } from '../modules/preprocessing/nanoplot'
-include { nanoplot as nanoplot_post } from '../modules/preprocessing/nanoplot'
+include { nanoplot as nanoplot_filter } from '../modules/preprocessing/nanoplot'
+include { nanoplot as nanoplot_final } from '../modules/preprocessing/nanoplot'
 include { hostremoval_lr } from '../modules/preprocessing/hostremoval'
 include { aggregatereports_lr } from '../modules/preprocessing/aggregate'
 
@@ -42,23 +43,34 @@ workflow {
 
 	if ( params.long_reads) {
 		ch_raw_reads = input_raw_lr()
-		
+		ch_reads_combined = combine_fastqs_single( ch_raw_reads
+      	.groupTuple()
+      	.map{ sample, reads -> [sample, reads.flatten()] } )
+
 		// Nanoplot before host removal
-		ch_nanoplot = nanoplot_pre(ch_raw_reads, 'pre')
+		ch_nanoplot = nanoplot_pre(ch_reads_combined, 'pre')
 		ch_versions = ch_versions.mix(ch_nanoplot.versions.first())
 
+		// fastplong filtering
+		ch_fastp = fastp(ch_reads_combined)
+		ch_versions = ch_versions.mix(ch_fastp.versions.first())
+
+		// NanoPlot after filtering
+  	ch_nanoplot_filter = nanoplot_filter(ch_fastp.qc_reads, 'filter')
+
 		// host removal
-		ch_host_removed = hostremoval_lr(ch_raw_reads, 
+		ch_host_removed = hostremoval_lr(ch_fastp.qc_reads, 
 				params.host_genome_location, 
 				params.bwa_index_base)
   	ch_versions = ch_versions.mix(ch_host_removed.versions.first())
 
   	// NanoPlot after host removal
-  	ch_nanoplot_post = nanoplot_post(ch_host_removed.reads, 'post')
+  	ch_nanoplot_final = nanoplot_final(ch_host_removed.reads, 'post')
 		
 		// Aggregate results
 		ch_stats = ch_nanoplot.nanoplot.collect()
-    	.concat(ch_nanoplot_post.nanoplot.collect()).collect()
+			.concat(ch_nanoplot_filter.nanoplot.collect())
+    	.concat(ch_nanoplot_final.nanoplot.collect()).collect()
   	ch_seq_stats = aggregatereports_lr(ch_stats, 
   		ch_host_removed.read_loc.collect(),
   		params.outdir + "/stats/preprocessed_reads.csv",
@@ -68,15 +80,15 @@ workflow {
 		if ( params.single_end ) {
 			ch_read_pairs = input_raw_single_end()
 			// Combine fastqs that were sequenced across multiple lanes
-                	ch_reads_combined = combine_fastqs_single( ch_read_pairs
-                        	.groupTuple()
-                        	.map{ sample, reads -> [sample, reads.flatten()] } )
+      ch_reads_combined = combine_fastqs_single( ch_read_pairs
+      	.groupTuple()
+      	.map{ sample, reads -> [sample, reads.flatten()] } )
 		} else {
 			ch_read_pairs = input_raw()
 			// Combine fastqs that were sequenced across multiple lanes
-                	ch_reads_combined = combine_fastqs( ch_read_pairs
-                        	.groupTuple()
-                        	.map{ sample, reads -> [sample, reads.flatten()] } )
+      ch_reads_combined = combine_fastqs( ch_read_pairs
+      	.groupTuple()
+      	.map{ sample, reads -> [sample, reads.flatten()] } )
 		}
 
 		// PREPROCESSING

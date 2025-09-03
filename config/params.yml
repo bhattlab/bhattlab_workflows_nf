@@ -22,7 +22,7 @@ publish_mode: "link"
 # Are you running this process on long-reads from ONT?
 long_reads: false
 
-# Are you running this process on long-reads from ONT?
+# Are you running this process on single-end reads?
 single_end: false
 
 
@@ -51,6 +51,10 @@ trimgalore_quality:  30
 trimgalore_min_read_length: 60
 trimgalore_start_trim: 0
 trimgalore_end_trim: 0
+
+# fastplong
+min_lr_len = 500
+min_lr_qual = 10
 
 #########################################################################
 # Classification parameters

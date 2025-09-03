@@ -77,7 +77,7 @@ process hostremoval_lr {
     """
     minimap2 -x map-ont -t ${task.cpus} -a ${host_genome_location}/${bwa_index_base} ${reads} > out.sam
     samtools fastq --threads ${task.cpus} -n -f4 out.sam > reads_${sample_id}.fastq
-    pigz reads_${sample_id}.fastq  
+    gzip reads_${sample_id}.fastq  
     echo "${sample_id},${params.outdir}/cleaned_reads/reads_${sample_id}.fastq.gz" > ${sample_id}.location
   
     cat <<-END_VERSIONS > versions.yml
