@@ -1,5 +1,5 @@
 process megahit {
-	publishDir params.outdir + "/assembly/megahit/", mode: params.publish_mode, pattern: "*.contigs.fa"
+	publishDir params.outdir + "/assembly/megahit/", mode: params.publish_mode, pattern: "${sample_id}.contigs.fa"
 	tag "MEGAHIT on $sample_id"
 
 	input:
@@ -12,16 +12,15 @@ process megahit {
 
 	shell:
 	"""
-	if [[ -f ${reads[1]} ]]
+	if ${params.single_end}
 	then
-		megahit -1 ${reads[0]} -2 ${reads[1]} -o megahit_${sample_id} \
-			--out-prefix ${sample_id} -t ${task.cpus} 
-	else
 		megahit -r ${reads} -o megahit_${sample_id} \
 			--out-prefix ${sample_id} -t ${task.cpus} 
+	else
+		megahit -1 ${reads[0]} -2 ${reads[1]} -o megahit_${sample_id} \
+			--out-prefix ${sample_id} -t ${task.cpus} 
 	fi
-	mv megahit_${sample_id}/${sample_id}.contigs.fa ./
-	rm -r megahit_${sample_id}
+	mv megahit_${sample_id}/${sample_id}.contigs.fa ${sample_id}.contigs.fa
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
