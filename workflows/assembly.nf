@@ -20,7 +20,7 @@ include { bakta } from '../modules/assembly/bakta'
 /* ASSEMBLY for long reads
  run flye, bakta, and quast
 */
-include { input_raw_lr } from '../modules/input/input_raw'
+include { input_check_lr } from '../modules/input/input_check'
 include { flye } from '../modules/assembly/flye'
 
 workflow {
@@ -28,7 +28,7 @@ workflow {
 
 	if ( params.long_reads) {
 		// Input
-		ch_processed_reads = input_raw_lr()
+		ch_processed_reads = input_check_lr()
 		
 		// ASSEMBLY
 		ch_assembly = flye(ch_processed_reads)

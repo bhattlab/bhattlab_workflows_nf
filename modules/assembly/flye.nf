@@ -1,5 +1,5 @@
 process flye {
-	publishDir params.outdir + "/assembly/flye/", mode: params.publish_mode, pattern: "flye_*"
+	publishDir params.outdir + "/assembly/flye/", mode: params.publish_mode, pattern: "flye_${sample_id}/*"
 	tag "Meta-Flye on $sample_id"
 
 	input:
