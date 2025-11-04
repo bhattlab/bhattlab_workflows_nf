@@ -17,7 +17,6 @@ process bakta {
 
   shell:
   """
-  mv ${assembly} assembly.fasta
   mkdir ./tmp
   bakta -t ${task.cpus} -o bakta_${sample_id} \
 		--db ${database}  --skip-trna \

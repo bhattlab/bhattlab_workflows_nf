@@ -77,7 +77,7 @@ metaphlan_db_path: "/<path-to-your-databases>/metaphlan_db/vJan21/"
 flye_overlap: "auto"
 
 # bakta database
-bakta_db_path: "/<path-to-your-databases>/bakta_db/v_5.0/db/"
+bakta_db_path: "/<path-to-your-databases>/bakta_db/v_6.0/db/"
 
 #########################################################################
 # Binning parameters
