@@ -67,7 +67,7 @@ process collate_metaphlan {
 
 	mkdir -p mpa_all_gtdb
 	mv $metaphlan_res_gtdb ./mpa_all_gtdb
-	combine_metaphlan.py ./mpa_all_gtdb metaphlan_all_gtdb.tsv
+	combine_metaphlan_gtdb.py ./mpa_all_gtdb metaphlan_all_gtdb.tsv
 
 	cat <<-END_VERSIONS > versions_metaphlan_final.yml
 	"${task.process}":
