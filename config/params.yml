@@ -22,9 +22,11 @@ publish_mode: "link"
 # Are you running this process on long-reads from ONT?
 long_reads: false
 
+# Do your long reads include base modification data (e.g. methylation with R10.04.1 chemistry)
+base_modification: false
+
 # Are you running this process on single-end reads?
 single_end: false
-
 
 # Please note that you absolutely need the header (the first line)!
 raw_reads: "./all_samples.csv"

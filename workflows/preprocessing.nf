@@ -4,6 +4,7 @@ nextflow.enable.dsl=2
 
 // some global parameters, to be changed in the paramter file
 params.long_reads=false
+params.base_modification=false
 params.single_end=false
 
 /* PREPROCESSING of short reads
@@ -34,6 +35,7 @@ include { nanoplot as nanoplot_pre } from '../modules/preprocessing/nanoplot'
 include { nanoplot as nanoplot_filter } from '../modules/preprocessing/nanoplot'
 include { nanoplot as nanoplot_final } from '../modules/preprocessing/nanoplot'
 include { hostremoval_lr } from '../modules/preprocessing/hostremoval'
+include { hostremoval_lr_bm } from '../modules/preprocessing/hostremoval'
 include { aggregatereports_lr } from '../modules/preprocessing/aggregate'
 
 
@@ -59,9 +61,16 @@ workflow {
   	ch_nanoplot_filter = nanoplot_filter(ch_fastp.qc_reads, 'filter')
 
 		// host removal
-		ch_host_removed = hostremoval_lr(ch_fastp.qc_reads, 
+		if ( params.base_modification) {
+			ch_host_removed = hostremoval_lr_bm(ch_fastp.qc_reads, 
 				params.host_genome_location, 
 				params.bwa_index_base)
+		}
+		else {
+			ch_host_removed = hostremoval_lr(ch_fastp.qc_reads, 
+				params.host_genome_location, 
+				params.bwa_index_base)
+		}
   	ch_versions = ch_versions.mix(ch_host_removed.versions.first())
 
   	// NanoPlot after host removal

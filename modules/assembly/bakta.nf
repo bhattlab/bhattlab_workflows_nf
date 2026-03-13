@@ -19,10 +19,10 @@ process bakta {
   """
   mkdir ./tmp
   bakta -t ${task.cpus} -o bakta_${sample_id} \
-		--db ${database}  --skip-trna \
+		--db ${database} --prefix assembly --skip-trna \
     --skip-tmrna --skip-ncrna --skip-ncrna-region --skip-crispr \
     --skip-sorf --skip-gap --compliant \
-    --keep-contig-headers --meta assembly.fasta
+    --keep-contig-headers --meta ${assembly}
 
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
