@@ -168,7 +168,7 @@ the workflow will fail. You can use the singularity container for that:
 ```bash
 cd <your-bakta-database-location>
 cd db
-singularity shell --bind ./:/mnt docker://ghcr.io/jakob-wirbel/micromamba-focal-longread:latest
+singularity shell --bind ./:/mnt docker://ghcr.io/jakob-wirbel/micromamba-focal-bakta:latest
 cd /mnt
 amrfinder_update --force_update --database ./amrfinderplus-db/
 ```
