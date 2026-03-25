@@ -1,10 +1,15 @@
-# Bhattlab metagenomics workflows [nf]
+# Metagenomics workflows
+
 Computational workflows for metagenomics tasks, packaged with Nextflow and 
-Singularity.
+Singularity. These workflows have been developed and are maintained by the
+[Bhattlab](https://www.bhattlab.com) and the 
+[Wirbel-lab](https://wirbel-lab.github.io/).
 
 This repository is modeled on the [Snakemake workflows from the 
 Bhattlab](https://github.com/bhattlab/bhattlab_workflows), where you might 
 find more workflows. 
+
+![](documentation/metro_map.png)
 
 ### Table of contents
 
