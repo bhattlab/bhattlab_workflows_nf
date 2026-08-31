@@ -1,6 +1,6 @@
 
 process bakta {
-	publishDir "${params.outdir}/assembly/bakta/", mode: params.publish_mode, pattern: "bakta_${sample_id}/assembly.*"
+	publishDir "${params.outdir}/assembly/bakta/", mode: params.publish_mode, pattern: "bakta_*/assembly.*"
   tag "Bakta on $sample_id"
 
 	input:
@@ -21,7 +21,7 @@ process bakta {
   bakta -t ${task.cpus} -o bakta_${sample_id} \
 		--db ${database}  --skip-trna \
     --skip-tmrna --skip-ncrna --skip-ncrna-region --skip-crispr \
-    --skip-sorf --skip-gap --compliant \
+    --skip-sorf --skip-gap \
     --keep-contig-headers --meta assembly.fasta
 
   cat <<-END_VERSIONS > versions.yml

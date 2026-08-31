@@ -1,6 +1,5 @@
 process megahit {
-	publishDir params.outdir + "/assembly/megahit/", mode: params.publish_mode, pattern: "${sample_id}.contigs.fa"
-	tag "MEGAHIT on $sample_id"
+	publishDir params.outdir + "/assembly/megahit/", mode: params.publish_mode, pattern: "*.contigs.fa"
 
 	input:
 	tuple val(sample_id), path(reads)
