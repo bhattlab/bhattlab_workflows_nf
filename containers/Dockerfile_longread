@@ -15,13 +15,13 @@ channels:
   - bioconda
 dependencies:
   - nanoplot=1.41.6
-  - minimap2=2.26
-  - samtools=1.16.1
+  - minimap2=2.31
+  - samtools=1.24
   - flye=2.9.6
-  - myloasm==0.6.0
+  - myloasm=0.6.0
 EOF
 
 RUN micromamba install -y -n base -f long_read.yml && \
   micromamba clean --all --yes
 
-ENV PATH "/opt/conda/bin:$PATH"
+ENV PATH="/opt/conda/bin:$PATH"
