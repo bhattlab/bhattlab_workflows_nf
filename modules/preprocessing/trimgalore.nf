@@ -6,11 +6,11 @@ process trimgalore {
 
     input:
     tuple val(sample_id), path(reads)
-    tuple val(sample_id), path(stats)
+    tuple val(sample_id_2), path(stats)
 
     output:
     tuple val(sample_id), path("${sample_id}_{R1_val_1,R2_val_2,val_unpaired}.fq.gz"), emit: reads
-    tuple val(sample_id), path("${stats}"), emit: stats
+    tuple val(sample_id_2), path("${stats}"), emit: stats
     path "versions.yml", emit: versions
 
     script:

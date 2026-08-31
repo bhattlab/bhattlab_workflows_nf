@@ -4,7 +4,7 @@ process hostremoval {
 
     input:
     tuple val(sample_id), path(reads)
-    tuple val(sample_id), path(stats)
+    tuple val(sample_id_2), path(stats)
     path host_genome_location
     val bwa_index_base
 

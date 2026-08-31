@@ -43,10 +43,11 @@ process fastp {
 		--json ${sample_id}.qc.json \
 		--html ${sample_id}.qc.html --disable_adapter_trimming
 
-	cat <<-END_VERSIONS > versions.yml
-	"${task.process}":
-	    fastplong: \$( fastplong --version | sed -e "s/fastplong //g" )
-	END_VERSIONS
+	fastplong 2> fpl.version || true
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastplong: \$( cat fpl.version | grep version | sed -e "s/version //g" )
+    END_VERSIONS
 	"""
 
 }
