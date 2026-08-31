@@ -17,7 +17,8 @@ dependencies:
   - nanoplot=1.41.6
   - minimap2=2.26
   - samtools=1.16.1
-  - flye=2.9.2
+  - flye=2.9.6
+  - myloasm==0.6.0
 EOF
 
 RUN micromamba install -y -n base -f long_read.yml && \
