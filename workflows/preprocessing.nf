@@ -134,7 +134,3 @@ workflow {
 		.collectFile(name: params.outdir + '/versions_preprocessing.yml')
 
 }
-
-workflow.onComplete {
-	log.info ( workflow.success ? "\nPreprocessing is done! Yay!\n" : "Oops .. something went wrong with the preprocessing" )
-}

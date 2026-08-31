@@ -42,7 +42,3 @@ workflow {
 		.unique()
 		.collectFile(name: params.outdir + '/versions_classification.yml', sort: true)
 }
-
-workflow.onComplete {
-	log.info ( workflow.success ? "\nClassification is done! Yay!\n" : "Oops .. something went wrong" )
-}

@@ -20,6 +20,3 @@ workflow {
 	ch_compare = sourmash_compare(ch_sourmash.collect())
 }
 
-workflow.onComplete {
-	log.info ( workflow.success ? "\nSourmash is done! Yay!\n" : "Oops .. something went wrong" )
-}
