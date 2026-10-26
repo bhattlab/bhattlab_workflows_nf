@@ -74,6 +74,10 @@ metaphlan_db_path: "/<path-to-your-databases>/metaphlan_db/vJan21/"
 #########################################################################
 # Assembly parameters
 
+# Which assemblers do you want to run on long reads?
+run_flye: true
+run_myloasm: true
+
 flye_overlap: "auto"
 
 # bakta database

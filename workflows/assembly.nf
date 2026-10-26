@@ -5,6 +5,8 @@ nextflow.enable.dsl=2
 // some global parameters, to be changed in the paramter file
 params.long_reads=false
 params.single_end=false
+params.run_flye=true
+params.run_myloasm=true
 
 /* ASSEMBLY for short reads
  run megahit, bakta, and quast
@@ -32,16 +34,23 @@ workflow {
 		ch_processed_reads = input_check_lr()
 		
 		// ASSEMBLY
+		ch_contigs = Channel.empty()
+		ch_loc = Channel.empty()
 		// flye
-		ch_assembly_flye = flye(ch_processed_reads)
-		ch_versions = ch_versions.mix(ch_assembly_flye.versions.first())
+		if ( params.run_flye ) {
+			ch_assembly_flye = flye(ch_processed_reads)
+			ch_versions = ch_versions.mix(ch_assembly_flye.versions.first())
+			ch_contigs = ch_contigs.mix(ch_assembly_flye.contigs)
+			ch_loc = ch_loc.mix(ch_assembly_flye.location)
+		}
 		// myloasm
-		ch_assembly_mylo = myloasm(ch_processed_reads)
-		ch_versions = ch_versions.mix(ch_assembly_mylo.versions.first())
+		if ( params.run_myloasm ) {
+			ch_assembly_mylo = myloasm(ch_processed_reads)
+			ch_versions = ch_versions.mix(ch_assembly_mylo.versions.first())
+			ch_contigs = ch_contigs.mix(ch_assembly_mylo.contigs)
+			ch_loc = ch_loc.mix(ch_assembly_mylo.location)
+		}
 
-		ch_contigs = ch_assembly_flye.contigs.mix(ch_assembly_mylo.contigs)
-		ch_loc = ch_assembly_flye.location.mix(ch_assembly_mylo.location)
-		
 		ch_assembly = [contigs: ch_contigs, location: ch_loc]
 	} else {
 		if ( params.single_end ) {

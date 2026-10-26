@@ -14,7 +14,10 @@ Our pipeline does the following tasks:
 
 ###  Long reads
 
-For long reads, assembly will be performed with Meta-Flye.
+For long reads, assembly will be performed with Meta-Flye and myloasm. If you
+want to run only one of them (for example to re-run myloasm without running
+Meta-Flye again), set `run_flye` or `run_myloasm` to `false` in the
+`params.yml` file.
 
 ## Setup
 
