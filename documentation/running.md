@@ -113,6 +113,27 @@ ls -l
 Please note that the actual folder name is much longer, but you can just use
 autocomplete to find the correct folder for the process that errored out.
 
+### Outdated containers
+
+Each container is downloaded only once and then kept in the singularity cache
+(the `singularity` folder in the `work` directory, or the folder set with
+`NXF_SINGULARITY_CACHEDIR`). Since the containers all use the `latest` tag,
+nextflow will not notice if a container has been updated in the meantime and
+will keep using the old copy. If a tool has been added to a container after you
+downloaded it (for example `myloasm` in the long-read container), the process
+will fail with the exit status `127` and the `.command.err` file in the work
+folder will tell you that the command was not found:
+```bash
+.command.sh: line 2: myloasm: command not found
+```
+
+In that case, remove the old copy of the container from the cache, so that
+nextflow downloads the current version the next time you run the workflow:
+```bash
+rm <your-singularity-cache>/ghcr.io-jakob-wirbel-micromamba-focal-longread-latest.img
+```
+Then run the workflow again with `-resume`.
+
 
 
 
