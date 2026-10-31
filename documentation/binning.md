@@ -7,6 +7,7 @@ Our pipeline does the following tasks:
 - Prepare the binning process by mapping the preprocessed reads back to the 
 assemblies
 - Binning with
+	- SemiBin2 (can be switched off, see below)
 	- MetaBAT
 	- CONCOCT
 	- Maxbin
@@ -23,6 +24,11 @@ to specify the output location, database locations, and parameters (see the
 binning workflow is:
 - the CheckM database location
 - the GTDB-tk database location
+- the `run_semibin2` parameter: if set to `true` (default), the contigs are 
+binned with SemiBin2, MetaBAT, CONCOCT, and Maxbin before combining the bins 
+with DAStool. If set to `false`, SemiBin2 is left out (only MetaBAT, CONCOCT, 
+and Maxbin). The pre-trained SemiBin2 model is set with 
+the `semibin2_environment` parameter (default: `human_gut`)
 
 Then, you can run the workflow like this:
 ```bash

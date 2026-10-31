@@ -129,18 +129,18 @@ rm checkm_data_2015_01_16.tar.gz
 
 The documentation for GTDB-tk can be found 
 [here]().
-The current version of this workflow uses the version `v2.3.2`, so you will
+The current version of this workflow uses the version `v2.6.1`, so you will
 need the following database:
 
 ```bash
 cd <your-gtdbtk-database-location>
-wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/auxillary_files/gtdbtk_r214_data.tar.gz
-md5sum gtdbtk_r214_data.tar.gz
-# expected output: 630745840850c532546996b22da14c27
+wget https://data.gtdb.ecogenomic.org/releases/release226/226.0/auxillary_files/gtdbtk_package/full_package/gtdbtk_r226_data.tar.gz
+md5sum gtdbtk_r226_data.tar.gz
+# expected output: 24b476ea5a4ef30519d461e56cc4a27f
 # if you do not see this output, something went wrong and you need to download
 # the database again!
-tar -xvzf gtdbtk_r214_data.tar.gz
-rm gtdbtk_r214_data.tar.gz
+tar -xvzf gtdbtk_r226_data.tar.gz
+rm gtdbtk_r226_data.tar.gz
 ```
 
 ### Bakta database

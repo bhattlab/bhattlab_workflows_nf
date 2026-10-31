@@ -86,11 +86,20 @@ bakta_db_path: "/<path-to-your-databases>/bakta_db/v_6.0/db/"
 #########################################################################
 # Binning parameters
 
+# Do you want to bin with SemiBin2 as well (then DAS Tool)?
+# If true, the contigs are binned with SemiBin2, MetaBAT2, MaxBin2, and CONCOCT
+# If false, the contigs are binned with MetaBAT2, MaxBin2, and CONCOCT
+# (then DAS Tool)
+run_semibin2: true
+
+# pre-trained SemiBin2 model (see `SemiBin2 single_easy_bin -h`)
+semibin2_environment: "human_gut"
+
 # checkM database
 checkm_db_path: "/<path-to-your-databases>/checkm_db/2015_01_16/"
 
 # path to the GTDB database
-gtdb_db_path: "/<path-to-your-databases>/GTDBTK/release214/"
+gtdb_db_path: "/<path-to-your-databases>/GTDBTK/release226/"
 
 #########################################################################
 # Viral classification databases

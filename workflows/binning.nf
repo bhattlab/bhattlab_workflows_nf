@@ -5,6 +5,8 @@ nextflow.enable.dsl=2
 // some global parameters, to be changed in the paramter file
 params.long_reads=false
 params.single_end=false
+params.run_semibin2=true
+params.semibin2_environment="human_gut"
 
 /* BINNING on short reads
  * Runs metabat2, maxbin, and Concoct on the contigs, then DAS tool
@@ -30,6 +32,15 @@ include { gtdbtk } from '../modules/binning/gtdbtk'
 include { input_check_lr } from '../modules/input/input_check'
 include { binning_prep_lr } from '../modules/binning/binning_prep'
 include { binning_prep_lr_bam } from '../modules/binning/binning_prep'
+
+/* BINNING with SemiBin2 (default)
+ * runs SemiBin2 together with metabat2, maxbin, and Concoct on the contigs,
+ * then DAS tool (set run_semibin2 to false in the parameter file to bin
+ * without SemiBin2)
+*/
+
+include { semibin2 } from '../modules/binning/semibin2'
+include { dastool_semibin2 } from '../modules/binning/dastool'
 
 workflow {
     ch_versions = Channel.empty()
@@ -67,29 +78,60 @@ workflow {
         ch_binning_prep = binning_prep(ch_input)
         ch_versions = ch_versions.mix(ch_binning_prep.versions.first())
     }
-    
-    // METABAT
-    ch_metabat = metabat(ch_binning_prep.bin_prep)
-    ch_versions = ch_versions.mix(ch_metabat.versions.first())
 
-    // MAXBIN
-    ch_maxbin = maxbin(ch_binning_prep.bin_prep)
-    ch_versions = ch_versions.mix(ch_maxbin.versions.first())
+    if ( params.run_semibin2 ) {
+        // SEMIBIN2
+        ch_semibin2 = semibin2(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_semibin2.versions.first())
 
-    // CONCOCT
-    ch_concoct = concoct(ch_binning_prep.bin_prep)
-    ch_versions = ch_versions.mix(ch_concoct.versions.first())
+        // METABAT
+        ch_metabat = metabat(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_metabat.versions.first())
 
-    // combine bins for each method for dastool
-    ch_final =  ch_binning_prep.bin_prep
-        .concat(ch_metabat.bins)
-        .concat(ch_maxbin.bins)
-        .concat(ch_concoct.bins)
-        .groupTuple(size: 4)
+        // MAXBIN
+        ch_maxbin = maxbin(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_maxbin.versions.first())
 
-    // run DAStool
-    ch_dastool = dastool(ch_final)
-    ch_versions = ch_versions.mix(ch_dastool.versions.first())
+        // CONCOCT
+        ch_concoct = concoct(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_concoct.versions.first())
+
+        // combine bins for each method for dastool
+        ch_final =  ch_binning_prep.bin_prep
+            .concat(ch_semibin2.bins)
+            .concat(ch_metabat.bins)
+            .concat(ch_maxbin.bins)
+            .concat(ch_concoct.bins)
+            .groupTuple(size: 5)
+
+        // run DAStool
+        ch_dastool = dastool_semibin2(ch_final)
+        ch_versions = ch_versions.mix(ch_dastool.versions.first())
+    }
+    else {
+        // METABAT
+        ch_metabat = metabat(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_metabat.versions.first())
+
+        // MAXBIN
+        ch_maxbin = maxbin(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_maxbin.versions.first())
+
+        // CONCOCT
+        ch_concoct = concoct(ch_binning_prep.bin_prep)
+        ch_versions = ch_versions.mix(ch_concoct.versions.first())
+
+        // combine bins for each method for dastool
+        ch_final =  ch_binning_prep.bin_prep
+            .concat(ch_metabat.bins)
+            .concat(ch_maxbin.bins)
+            .concat(ch_concoct.bins)
+            .groupTuple(size: 4)
+
+        // run DAStool
+        ch_dastool = dastool(ch_final)
+        ch_versions = ch_versions.mix(ch_dastool.versions.first())
+    }
 
     // run checkM on DAStool bins
     ch_checkm = checkm(ch_dastool.bins_checkm, params.checkm_db_path)

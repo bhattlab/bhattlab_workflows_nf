@@ -30,7 +30,7 @@ process gtdbtk {
 	
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
-            GTDB-tk: \$( gtdbtk -v | sed -e "s/gtdbtk: version //g" | sed -e "s/ Copyright.*//g" )
+            GTDB-tk: \$( gtdbtk -v | head -n 1 | sed -e "s/gtdbtk: version //g" | sed -e "s/ Copyright.*//g" )
         END_VERSIONS
         """
 }
